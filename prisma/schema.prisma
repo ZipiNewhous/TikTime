@@ -1,0 +1,197 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// CATEGORIES
+// ============================================================
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String
+  slug        String    @unique
+  description String?
+  parentId    Int?
+  order       Int       @default(0)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  parent   Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryToCategory")
+
+  productCategories ProductCategory[]
+
+  @@index([slug])
+  @@index([parentId])
+}
+
+// ============================================================
+// BRANDS
+// ============================================================
+model Brand {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  description String?
+  logo        String?
+  website     String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products Product[]
+
+  @@index([slug])
+}
+
+// ============================================================
+// TAGS
+// ============================================================
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name      String
+  slug      String   @unique
+  color     String   @default("#c9a96e")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  productTags ProductTag[]
+
+  @@index([slug])
+}
+
+// ============================================================
+// PRODUCTS
+// ============================================================
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  brandId     Int
+  price       Float
+  salePrice   Float?
+  description String?
+  specs       String?
+  sku         String   @unique
+  stockStatus String   @default("in_stock")
+  image1      String?
+  image2      String?
+  image3      String?
+  featured    Boolean  @default(false)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  brand             Brand             @relation(fields: [brandId], references: [id])
+  productCategories ProductCategory[]
+  productTags       ProductTag[]
+  orderItems        OrderItem[]
+
+  @@index([slug])
+  @@index([brandId])
+  @@index([stockStatus])
+  @@index([featured])
+  @@index([active])
+}
+
+// ============================================================
+// PRODUCT <-> CATEGORY  (Many-to-Many)
+// ============================================================
+model ProductCategory {
+  productId  Int
+  categoryId Int
+
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([productId, categoryId])
+}
+
+// ============================================================
+// PRODUCT <-> TAG  (Many-to-Many)
+// ============================================================
+model ProductTag {
+  productId Int
+  tagId     Int
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([productId, tagId])
+}
+
+// ============================================================
+// ORDERS
+// ============================================================
+model Order {
+  id                   Int      @id @default(autoincrement())
+  orderNumber          String   @unique
+  customerName         String
+  customerPhone        String
+  customerEmail        String
+  customerAddress      String
+  totalAmount          Float
+  status               String   @default("new")
+  paymentStatus        String   @default("pending")
+  paymentMethod        String?
+  paymentTransactionId String?
+  notes                String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  items OrderItem[]
+
+  @@index([orderNumber])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([createdAt])
+}
+
+// ============================================================
+// ORDER ITEMS
+// ============================================================
+model OrderItem {
+  id           Int    @id @default(autoincrement())
+  orderId      Int
+  productId    Int
+  productName  String
+  productPrice Float
+  quantity     Int
+  subtotal     Float
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+}
+
+// ============================================================
+// ADMIN USERS
+// ============================================================
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+}
+
+// ============================================================
+// SITE SETTINGS (key/value store)
+// ============================================================
+model SiteSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+}

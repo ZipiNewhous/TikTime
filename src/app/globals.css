@@ -1,0 +1,389 @@
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap');
+@import "tailwindcss";
+/* ============================================================
+   TIKTIME DESIGN SYSTEM
+   ============================================================ */
+
+@theme {
+  /* Brand Colors */
+  --color-tik-dark:    #222021;
+  --color-tik-gold:    #c9a96e;
+  --color-tik-gold-hover: #b8933a;
+  --color-tik-footer:  #222222;
+  --color-tik-white:   #ffffff;
+  --color-tik-black:   #000000;
+  --color-tik-gray:    #f5f5f5;
+  --color-tik-gray-mid: #888888;
+  --color-tik-border:  #e5e5e5;
+  --color-tik-topbar:  #1a1918;
+  --color-tik-sale:    #e07020;
+
+  /* Typography */
+  --font-assistant: 'Assistant', sans-serif;
+
+  /* Border radius */
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-xl:  16px;
+
+  /* Shadows */
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-card-hover: 0 8px 30px rgba(0,0,0,0.14);
+}
+
+/* ============================================================
+   GLOBAL RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  direction: rtl;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Assistant', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #000000;
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   RTL UTILITIES
+   ============================================================ */
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/* ============================================================
+   SCROLLBAR STYLING
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #c9a96e;
+  border-radius: 3px;
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Assistant', sans-serif;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideInRight 0.3s ease-out;
+}
+
+/* ============================================================
+   TOAST NOTIFICATIONS
+   ============================================================ */
+.toast-container {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ============================================================
+   PRODUCT CARD
+   ============================================================ */
+.product-card {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  padding: 12px;
+}
+
+/* ============================================================
+   GOLD BUTTON
+   ============================================================ */
+.btn-gold {
+  background: #c9a96e;
+  color: #ffffff;
+  font-family: 'Assistant', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-gold:hover {
+  background: #b8933a;
+  transform: translateY(-1px);
+}
+.btn-gold:active {
+  transform: translateY(0);
+}
+
+.btn-dark {
+  background: #222021;
+  color: #ffffff;
+  font-family: 'Assistant', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-dark:hover {
+  background: #333;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #222021;
+  font-family: 'Assistant', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 11px 28px;
+  border: 2px solid #222021;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-outline:hover {
+  background: #222021;
+  color: #ffffff;
+}
+
+/* ============================================================
+   FORM INPUTS
+   ============================================================ */
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  font-family: 'Assistant', sans-serif;
+  font-size: 16px;
+  color: #000;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s ease;
+  text-align: right;
+  direction: rtl;
+}
+.form-input:focus {
+  border-color: #c9a96e;
+  box-shadow: 0 0 0 2px rgba(201,169,110,0.15);
+}
+.form-input::placeholder {
+  color: #aaa;
+}
+
+/* ============================================================
+   PRICE DISPLAY
+   ============================================================ */
+.price-current {
+  font-size: 22px;
+  font-weight: 800;
+  color: #222021;
+}
+.price-original {
+  font-size: 16px;
+  font-weight: 400;
+  color: #999;
+  text-decoration: line-through;
+}
+.price-sale {
+  font-size: 22px;
+  font-weight: 800;
+  color: #c9a96e;
+}
+
+/* ============================================================
+   BADGE / TAG
+   ============================================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.badge-gold {
+  background: #c9a96e;
+  color: #fff;
+}
+.badge-dark {
+  background: #222021;
+  color: #fff;
+}
+.badge-red {
+  background: #e53e3e;
+  color: #fff;
+}
+.badge-green {
+  background: #38a169;
+  color: #fff;
+}
+
+/* ============================================================
+   SECTION HEADING
+   ============================================================ */
+.section-title {
+  font-size: 30px;
+  font-weight: 800;
+  color: #222021;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.section-subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  color: #888;
+  text-align: center;
+  margin-bottom: 40px;
+}
+.section-divider {
+  width: 60px;
+  height: 3px;
+  background: #c9a96e;
+  margin: 0 auto 40px;
+}
+
+/* ============================================================
+   BREADCRUMBS
+   ============================================================ */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #888;
+}
+.breadcrumb a:hover {
+  color: #c9a96e;
+}
+
+/* ============================================================
+   LOADING SKELETON
+   ============================================================ */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ============================================================
+   ADMIN PANEL
+   ============================================================ */
+.admin-sidebar {
+  background: #1a1a2e;
+  min-height: 100vh;
+  width: 260px;
+  flex-shrink: 0;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  color: #a0aec0;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s;
+  border-radius: 6px;
+  margin: 2px 8px;
+  direction: rtl;
+}
+.admin-nav-item:hover,
+.admin-nav-item.active {
+  background: rgba(201,169,110,0.15);
+  color: #c9a96e;
+}
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+.data-table th {
+  background: #f8f8f8;
+  padding: 12px 16px;
+  text-align: right;
+  font-weight: 700;
+  color: #555;
+  border-bottom: 2px solid #e5e5e5;
+  white-space: nowrap;
+}
+.data-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+.data-table tr:hover td {
+  background: #fafafa;
+}
