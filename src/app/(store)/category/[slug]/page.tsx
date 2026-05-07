@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic';
+
 import { notFound } from "next/navigation";
 import prisma from "@/lib/db/prisma";
 import CategoryPageClient from "./CategoryPageClient";
@@ -11,10 +13,10 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const category = await prisma.category.findUnique({ where: { slug } });
-  if (!category) return { title: "קטגוריה לא נמצאה" };
+  if (!category) return { title: "׳§׳˜׳’׳•׳¨׳™׳” ׳׳ ׳ ׳׳¦׳׳”" };
   return {
     title: category.name,
-    description: `קולקציית ${category.name} של טיק טיים - שעוני יוקרה מקוריים`,
+    description: `׳§׳•׳׳§׳¦׳™׳™׳× ${category.name} ׳©׳ ׳˜׳™׳§ ׳˜׳™׳™׳ - ׳©׳¢׳•׳ ׳™ ׳™׳•׳§׳¨׳” ׳׳§׳•׳¨׳™׳™׳`,
   };
 }
 

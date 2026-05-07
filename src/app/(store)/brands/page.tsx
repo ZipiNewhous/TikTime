@@ -1,10 +1,12 @@
+﻿export const dynamic = 'force-dynamic';
+
 import Link from "next/link";
 import prisma from "@/lib/db/prisma";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "מותגים | TikTime",
-  description: "כל מותגי השעונים המובילים - Rolex, Omega, TAG Heuer ועוד",
+  title: "׳׳•׳×׳’׳™׳ | TikTime",
+  description: "׳›׳ ׳׳•׳×׳’׳™ ׳”׳©׳¢׳•׳ ׳™׳ ׳”׳׳•׳‘׳™׳׳™׳ - Rolex, Omega, TAG Heuer ׳•׳¢׳•׳“",
 };
 
 export default async function BrandsPage() {
@@ -19,8 +21,8 @@ export default async function BrandsPage() {
       {/* Hero */}
       <div className="bg-[#222021] text-white py-14">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-4xl font-black mb-3">המותגים שלנו</h1>
-          <p className="text-gray-400 text-lg">קולקציית שעונים מהמותגים היוקרתיים ביותר בעולם</p>
+          <h1 className="text-4xl font-black mb-3">׳”׳׳•׳×׳’׳™׳ ׳©׳׳ ׳•</h1>
+          <p className="text-gray-400 text-lg">׳§׳•׳׳§׳¦׳™׳™׳× ׳©׳¢׳•׳ ׳™׳ ׳׳”׳׳•׳×׳’׳™׳ ׳”׳™׳•׳§׳¨׳×׳™׳™׳ ׳‘׳™׳•׳×׳¨ ׳‘׳¢׳•׳׳</p>
         </div>
       </div>
 
@@ -53,7 +55,7 @@ export default async function BrandsPage() {
                 <p className="text-gray-500 text-xs mt-1 line-clamp-2">{brand.description}</p>
               )}
               <p className="text-[#c9a96e] text-sm font-bold mt-3">
-                {brand._count.products} מוצרים
+                {brand._count.products} ׳׳•׳¦׳¨׳™׳
               </p>
             </Link>
           ))}
@@ -61,7 +63,7 @@ export default async function BrandsPage() {
 
         {brands.length === 0 && (
           <div className="text-center py-20 text-gray-500">
-            <p>לא נמצאו מותגים</p>
+            <p>׳׳ ׳ ׳׳¦׳׳• ׳׳•׳×׳’׳™׳</p>
           </div>
         )}
       </div>

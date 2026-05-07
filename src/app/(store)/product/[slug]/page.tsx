@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic';
+
 import { notFound } from "next/navigation";
 import prisma from "@/lib/db/prisma";
 import ProductPageClient from "./ProductPageClient";
@@ -16,7 +18,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     where: { slug },
     include: { brand: { select: { name: true } } },
   });
-  if (!product) return { title: "מוצר לא נמצא" };
+  if (!product) return { title: "׳׳•׳¦׳¨ ׳׳ ׳ ׳׳¦׳" };
   return {
     title: `${product.name} | ${product.brand.name}`,
     description: product.description ?? `${product.name} - ${formatPrice(product.price)}`,
@@ -64,7 +66,7 @@ export default async function ProductPage({ params }: PageProps) {
       {/* Related Products */}
       {related.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 py-16 border-t">
-          <h2 className="text-2xl font-black text-[#222021] mb-8">מוצרים נוספים של {product.brand.name}</h2>
+          <h2 className="text-2xl font-black text-[#222021] mb-8">׳׳•׳¦׳¨׳™׳ ׳ ׳•׳¡׳₪׳™׳ ׳©׳ {product.brand.name}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {related.map((p) => (
               <ProductCard key={p.id} product={p} />
