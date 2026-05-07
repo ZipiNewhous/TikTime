@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 
@@ -81,3 +83,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "שגיאה בטעינת המוצרים" }, { status: 500 });
   }
 }
+

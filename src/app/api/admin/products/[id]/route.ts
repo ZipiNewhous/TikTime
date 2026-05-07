@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getAdminFromRequest } from "@/lib/auth/admin";
@@ -18,7 +20,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     },
   });
 
-  if (!product) return NextResponse.json({ error: "מוצר לא נמצא" }, { status: 404 });
+  if (!product) return NextResponse.json({ error: "׳׳•׳¦׳¨ ׳׳ ׳ ׳׳¦׳" }, { status: 404 });
   return NextResponse.json(product);
 }
 
@@ -67,7 +69,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ success: true, product });
   } catch (err) {
     console.error("[PUT /api/admin/products/[id]]", err);
-    return NextResponse.json({ error: "שגיאה בעדכון המוצר" }, { status: 500 });
+    return NextResponse.json({ error: "׳©׳’׳™׳׳” ׳‘׳¢׳“׳›׳•׳ ׳”׳׳•׳¦׳¨" }, { status: 500 });
   }
 }
 
@@ -83,6 +85,6 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("[DELETE /api/admin/products/[id]]", err);
-    return NextResponse.json({ error: "שגיאה במחיקת המוצר" }, { status: 500 });
+    return NextResponse.json({ error: "׳©׳’׳™׳׳” ׳‘׳׳—׳™׳§׳× ׳”׳׳•׳¦׳¨" }, { status: 500 });
   }
 }

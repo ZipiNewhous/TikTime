@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { generateOrderNumber } from "@/lib/utils";
@@ -83,3 +85,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "שגיאה ביצירת ההזמנה" }, { status: 500 });
   }
 }
+

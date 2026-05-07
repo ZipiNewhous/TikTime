@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getAdminFromRequest } from "@/lib/auth/admin";
@@ -50,3 +52,4 @@ export async function GET(req: NextRequest) {
     totalPages: Math.ceil(total / pageSize),
   });
 }
+

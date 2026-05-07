@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getAdminFromRequest } from "@/lib/auth/admin";
@@ -42,3 +44,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "שגיאה ביצירת המותג" }, { status: 500 });
   }
 }
+

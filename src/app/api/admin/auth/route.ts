@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from "next/server";
 import { adminLogin, TOKEN_COOKIE } from "@/lib/auth/admin";
 
@@ -38,3 +40,4 @@ export async function DELETE() {
   res.cookies.delete(TOKEN_COOKIE);
   return res;
 }
+

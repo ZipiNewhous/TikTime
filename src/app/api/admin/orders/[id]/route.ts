@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getAdminFromRequest } from "@/lib/auth/admin";
@@ -17,7 +19,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     },
   });
 
-  if (!order) return NextResponse.json({ error: "הזמנה לא נמצאה" }, { status: 404 });
+  if (!order) return NextResponse.json({ error: "׳”׳–׳׳ ׳” ׳׳ ׳ ׳׳¦׳׳”" }, { status: 404 });
   return NextResponse.json(order);
 }
 
@@ -42,6 +44,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ success: true, order });
   } catch (err) {
     console.error("[PATCH /api/admin/orders/[id]]", err);
-    return NextResponse.json({ error: "שגיאה בעדכון ההזמנה" }, { status: 500 });
+    return NextResponse.json({ error: "׳©׳’׳™׳׳” ׳‘׳¢׳“׳›׳•׳ ׳”׳”׳–׳׳ ׳”" }, { status: 500 });
   }
 }

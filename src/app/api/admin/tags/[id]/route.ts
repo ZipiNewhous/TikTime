@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { getAdminFromRequest } from "@/lib/auth/admin";
@@ -10,7 +12,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   try {
     const { name, color } = await req.json();
-    if (!name) return NextResponse.json({ error: "שם תגית נדרש" }, { status: 400 });
+    if (!name) return NextResponse.json({ error: "׳©׳ ׳×׳’׳™׳× ׳ ׳“׳¨׳©" }, { status: 400 });
 
     const slug = name.toLowerCase().replace(/\s+/g, "-");
     const tag = await prisma.tag.update({
@@ -20,7 +22,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ success: true, tag });
   } catch (err) {
     console.error("[PUT /api/admin/tags/[id]]", err);
-    return NextResponse.json({ error: "שגיאה בעדכון התגית" }, { status: 500 });
+    return NextResponse.json({ error: "׳©׳’׳™׳׳” ׳‘׳¢׳“׳›׳•׳ ׳”׳×׳’׳™׳×" }, { status: 500 });
   }
 }
 
@@ -35,6 +37,6 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("[DELETE /api/admin/tags/[id]]", err);
-    return NextResponse.json({ error: "שגיאה במחיקת התגית" }, { status: 500 });
+    return NextResponse.json({ error: "׳©׳’׳™׳׳” ׳‘׳׳—׳™׳§׳× ׳”׳×׳’׳™׳×" }, { status: 500 });
   }
 }
