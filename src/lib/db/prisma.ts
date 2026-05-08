@@ -13,7 +13,7 @@ const globalForPrisma = globalThis as unknown as {
 
 function createPrismaClient(): PrismaClient {
   const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: process.env.DATABASE_URL?.replace(/^﻿/, "").trim(),
     ssl: { rejectUnauthorized: false },
     max: 1,
   });
