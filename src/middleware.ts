@@ -24,10 +24,9 @@ export async function middleware(req: NextRequest) {
   try {
     await jwtVerify(token, getSecret(), { algorithms: ["HS256"] });
     return NextResponse.next();
-  } catch (err: unknown) {
+  } catch {
     const res = NextResponse.redirect(new URL("/admin/login", req.url));
     res.cookies.delete(TOKEN_COOKIE);
-    res.headers.set("x-auth-error", (err as Error).message ?? "unknown");
     return res;
   }
 }
