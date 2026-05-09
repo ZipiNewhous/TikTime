@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 const TOKEN_COOKIE = "tiktime-admin-token";
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET ?? "tiktime-admin-secret-change-in-production"
-);
+
+function getSecret(): Uint8Array {
+  const raw = process.env.NEXTAUTH_SECRET ?? "";
+  const clean = raw.replace(/^﻿/, "").trim() || "tiktime-admin-secret-change-in-production";
+  return new TextEncoder().encode(clean);
+}
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -19,7 +22,7 @@ export async function middleware(req: NextRequest) {
   }
 
   try {
-    await jwtVerify(token, JWT_SECRET);
+    await jwtVerify(token, getSecret(), { algorithms: ["HS256"] });
     return NextResponse.next();
   } catch {
     const res = NextResponse.redirect(new URL("/admin/login", req.url));
