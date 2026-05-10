@@ -1,78 +1,77 @@
-"use client";
-
-import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { ChevronRight, ChevronLeft } from "lucide-react";
-
-const SLIDES = [
-  { id: 1, image: "https://tiktime.co.il/GalleryFlash_182.jpg" },
-  { id: 2, image: "https://tiktime.co.il/GalleryFlash_177.jpg" },
-  { id: 3, image: "https://tiktime.co.il/GalleryFlash_178.jpg" },
-];
+import Link from "next/link";
 
 export default function HeroSection() {
-  const [current, setCurrent] = useState(0);
-  const [imgError, setImgError] = useState<Record<number, boolean>>({});
-
-  const next = useCallback(() => setCurrent((c) => (c + 1) % SLIDES.length), []);
-  const prev = () => setCurrent((c) => (c - 1 + SLIDES.length) % SLIDES.length);
-
-  useEffect(() => {
-    const t = setInterval(next, 3000);
-    return () => clearInterval(t);
-  }, [next]);
-
   return (
     <section
-      className="relative w-full overflow-hidden bg-gray-100"
-      style={{ aspectRatio: "1920/750" }}
+      className="relative w-full overflow-hidden"
+      style={{ height: "clamp(260px, 35vw, 500px)" }}
     >
-      {/* Slide image */}
-      {!imgError[current] ? (
+      {/* Layer 1 — dark brown gradient background */}
+      <Image
+        src="/images/banner-bg-1.png"
+        alt=""
+        fill
+        className="object-cover object-center"
+        style={{ zIndex: 1 }}
+        priority
+      />
+
+      {/* Layer 2 — watch on beige background (left 55%) */}
+      <div
+        className="absolute top-0 left-0 h-full"
+        style={{ width: "55%", zIndex: 2 }}
+      >
         <Image
-          key={current}
-          src={SLIDES[current].image}
-          alt="TikTime Collection"
+          src="/images/banner-124.jpg"
+          alt="New Arrival Watch"
           fill
-          className="object-cover object-center"
-          priority={current === 0}
-          unoptimized
-          onError={() => setImgError((e) => ({ ...e, [current]: true }))}
+          className="object-cover"
+          style={{ objectPosition: "right center" }}
+          priority
         />
-      ) : (
-        <div className="absolute inset-0 bg-gray-200" />
-      )}
-
-      {/* Prev / Next arrows */}
-      <button
-        onClick={prev}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/60 text-white p-2.5 rounded-full transition-colors z-10"
-        aria-label="הקודם"
-      >
-        <ChevronRight className="h-5 w-5" />
-      </button>
-      <button
-        onClick={next}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/60 text-white p-2.5 rounded-full transition-colors z-10"
-        aria-label="הבא"
-      >
-        <ChevronLeft className="h-5 w-5" />
-      </button>
-
-      {/* Dot indicators */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-        {SLIDES.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrent(i)}
-            aria-label={`שקופית ${i + 1}`}
-            className="w-3 h-3 rounded-full border-2 border-white transition-all duration-300"
-            style={{
-              backgroundColor: i === current ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.3)",
-            }}
-          />
-        ))}
       </div>
+
+      {/* Layer 3 — NEW ARRIVAL text */}
+      <div
+        className="absolute"
+        style={{
+          right: "8%",
+          top: "50%",
+          transform: "translateY(-50%)",
+          width: "35%",
+          zIndex: 3,
+        }}
+      >
+        <Image
+          src="/images/banner-125.png"
+          alt="New Arrival"
+          width={700}
+          height={260}
+          className="w-full h-auto object-contain"
+        />
+      </div>
+
+      {/* Layer 4 — SHOP NOW button */}
+      <Link
+        href="/shop"
+        className="absolute hover:opacity-80 transition-opacity"
+        style={{
+          right: "10%",
+          bottom: "22%",
+          zIndex: 4,
+          background: "#1a1a1a",
+          color: "#fff",
+          padding: "12px 32px",
+          fontSize: "14px",
+          letterSpacing: "2px",
+          textTransform: "uppercase",
+          display: "inline-block",
+          textDecoration: "none",
+        }}
+      >
+        SHOP NOW
+      </Link>
     </section>
   );
 }
