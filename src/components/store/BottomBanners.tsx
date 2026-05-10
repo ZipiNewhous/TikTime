@@ -3,55 +3,73 @@ import Link from "next/link";
 
 export default function BottomBanners() {
   return (
-    <>
-      {/* Banner 1: dark brown background + NEW ARRIVAL text + SHOP NOW button */}
-      <section
-        className="relative w-full overflow-hidden"
-        style={{ aspectRatio: "1400/686" }}
-      >
-        {/* Background */}
-        <Image
-          src="/images/banner-bg-1.png"
-          alt="New Arrival Background"
-          fill
-          className="object-cover object-center"
-        />
+    <section
+      className="relative w-full overflow-hidden"
+      style={{ height: "clamp(260px, 35vw, 500px)" }}
+    >
+      {/* Layer 1 — dark brown gradient background */}
+      <Image
+        src="/images/banner-bg-1.png"
+        alt=""
+        fill
+        className="object-cover object-center"
+        style={{ zIndex: 1 }}
+      />
 
-        {/* NEW ARRIVAL text — centered */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="relative" style={{ width: "40%", aspectRatio: "801/299" }}>
-            <Image
-              src="/images/banner-watch-1.png"
-              alt="New Arrival"
-              fill
-              className="object-contain"
-            />
-          </div>
-        </div>
-
-        {/* SHOP NOW button — bottom left */}
-        <div className="absolute bottom-8 left-8">
-          <Link
-            href="/category/gevarim"
-            className="inline-block bg-white hover:bg-gray-100 text-[#222222] text-xs font-bold px-8 py-3 tracking-widest uppercase transition-colors"
-          >
-            SHOP NOW
-          </Link>
-        </div>
-      </section>
-
-      {/* Banner 2: full-width watch image */}
-      <section
-        className="relative w-full overflow-hidden"
-        style={{ aspectRatio: "1244/800" }}
+      {/* Layer 2 — watch on beige background (left 55%) */}
+      <div
+        className="absolute top-0 left-0 h-full"
+        style={{ width: "55%", zIndex: 2 }}
       >
         <Image
-          src="/images/banner-2.jpg"
-          alt="שעון יוקרה"
+          src="/images/banner-124.jpg"
+          alt="New Arrival Watch"
           fill
-          className="object-cover object-center"
+          className="object-cover"
+          style={{ objectPosition: "right center" }}
         />
-      </section>
-    </>
+      </div>
+
+      {/* Layer 3 — NEW ARRIVAL text */}
+      <div
+        className="absolute"
+        style={{
+          right: "8%",
+          top: "50%",
+          transform: "translateY(-50%)",
+          width: "35%",
+          zIndex: 3,
+        }}
+      >
+        <Image
+          src="/images/banner-125.png"
+          alt="New Arrival"
+          width={700}
+          height={260}
+          className="w-full h-auto object-contain"
+        />
+      </div>
+
+      {/* Layer 4 — SHOP NOW button */}
+      <Link
+        href="/shop"
+        className="absolute hover:opacity-80 transition-opacity"
+        style={{
+          right: "10%",
+          bottom: "22%",
+          zIndex: 4,
+          background: "#1a1a1a",
+          color: "#fff",
+          padding: "12px 32px",
+          fontSize: "14px",
+          letterSpacing: "2px",
+          textTransform: "uppercase",
+          display: "inline-block",
+          textDecoration: "none",
+        }}
+      >
+        SHOP NOW
+      </Link>
+    </section>
   );
 }
