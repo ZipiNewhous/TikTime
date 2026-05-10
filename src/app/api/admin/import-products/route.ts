@@ -3,6 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as xlsx from "xlsx";
 import prisma from "@/lib/db/prisma";
+import { uploadImageFromUrl } from "@/lib/supabase/uploadImage";
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
@@ -347,7 +348,16 @@ export async function POST(request: NextRequest) {
           }
 
           /* ── Image ──────────────────────────────────────────── */
-          const imageUrl = cellStr(row["image_url"]) || null;
+          const rawImageUrl = cellStr(row["image_url"]) || null;
+          let imageUrl: string | null = null;
+          if (rawImageUrl) {
+            const safeName = `${brandName}-${skuRaw}-${Date.now()}`
+              .toLowerCase()
+              .replace(/[^a-z0-9\-]/g, "-")
+              .replace(/-+/g, "-")
+              .slice(0, 100);
+            imageUrl = await uploadImageFromUrl(rawImageUrl, `${safeName}.jpg`);
+          }
 
           /* ── Create product ─────────────────────────────────── */
           const name = `${brandName} ${skuRaw}`;
