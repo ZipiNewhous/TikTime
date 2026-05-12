@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "./client";
+import { getSupabaseAdmin } from "./client";
 
 const BUCKET = "products";
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
@@ -33,7 +33,7 @@ export async function uploadImageFromUrl(
     // 2. Upload to Supabase Storage
     console.log(`[upload] Uploading to bucket "${BUCKET}" as "${fileName}"...`);
 
-    const { data: uploadData, error } = await supabaseAdmin.storage
+    const { data: uploadData, error } = await getSupabaseAdmin().storage
       .from(BUCKET)
       .upload(fileName, buffer, { contentType, upsert: true });
 
