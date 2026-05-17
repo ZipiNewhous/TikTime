@@ -46,16 +46,16 @@ export async function GET(req: NextRequest) {
     }
 
     // Sorting — out-of-stock products always sink to the bottom
-    const primarySort: Record<string, string> = (() => {
+    const primarySort = (() => {
       switch (sortBy) {
-        case "price_asc":  return { price: "asc" };
-        case "price_desc": return { price: "desc" };
-        case "name_asc":   return { name: "asc" };
+        case "price_asc":  return { price: "asc"  as const };
+        case "price_desc": return { price: "desc" as const };
+        case "name_asc":   return { name: "asc"   as const };
         case "newest":
-        default:           return { createdAt: "desc" };
+        default:           return { createdAt: "desc" as const };
       }
     })();
-    const orderBy = [{ stockStatus: "asc" }, primarySort];
+    const orderBy = [{ stockStatus: "asc" as const }, primarySort];
 
     const [items, total] = await Promise.all([
       prisma.product.findMany({
