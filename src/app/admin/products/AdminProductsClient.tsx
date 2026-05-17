@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Search, Edit, Trash2, Eye, FileSpreadsheet, X } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Eye, FileSpreadsheet, X, Filter } from "lucide-react";
 import { formatPrice, getPlaceholderImage, STOCK_STATUS_LABELS, formatDateTime } from "@/lib/utils";
 import { toast } from "@/components/ui/Toast";
 import Badge from "@/components/ui/Badge";
@@ -25,6 +25,9 @@ interface Product {
   productTags: { tag: { id: number; name: string; color: string } }[];
 }
 
+interface BrandOption    { id: number; name: string; _count: { products: number } }
+interface CategoryOption { id: number; name: string; isChild: boolean }
+
 export default function AdminProductsClient() {
   const [products, setProducts]       = useState<Product[]>([]);
   const [total, setTotal]             = useState(0);
@@ -35,6 +38,12 @@ export default function AdminProductsClient() {
   const [deletingId, setDeletingId]   = useState<number | null>(null);
   const [showImport, setShowImport]   = useState(false);
 
+  /* ── Filter state ──────────────────────────────────────────────── */
+  const [brandFilter, setBrandFilter]       = useState<number | "">("");
+  const [categoryFilter, setCategoryFilter] = useState<number | "">("");
+  const [brands, setBrands]                 = useState<BrandOption[]>([]);
+  const [categories, setCategories]         = useState<CategoryOption[]>([]);
+
   /* ── Bulk selection state ─────────────────────────────────────── */
   const [selectedIds, setSelectedIds]     = useState<Set<number>>(new Set());
   const [bulkDeleting, setBulkDeleting]   = useState(false);
@@ -43,15 +52,33 @@ export default function AdminProductsClient() {
   const isAllSelected   = products.length > 0 && products.every((p) => selectedIds.has(p.id));
   const isIndeterminate = selectedIds.size > 0 && !isAllSelected;
 
-  // Keep the indeterminate DOM property in sync (not a React attribute)
   useEffect(() => {
-    if (selectAllRef.current) {
-      selectAllRef.current.indeterminate = isIndeterminate;
-    }
+    if (selectAllRef.current) selectAllRef.current.indeterminate = isIndeterminate;
   }, [isIndeterminate]);
 
-  // Clear selection when the visible page changes
-  useEffect(() => { setSelectedIds(new Set()); }, [page, search]);
+  useEffect(() => { setSelectedIds(new Set()); }, [page, search, brandFilter, categoryFilter]);
+
+  /* ── Fetch filter options once on mount ───────────────────────── */
+  useEffect(() => {
+    fetch("/api/admin/brands")
+      .then((r) => r.json())
+      .then((data: BrandOption[]) => setBrands(data))
+      .catch(() => {});
+
+    fetch("/api/admin/categories")
+      .then((r) => r.json())
+      .then((data: { id: number; name: string; children?: { id: number; name: string }[] }[]) => {
+        const flat: CategoryOption[] = [];
+        for (const parent of data) {
+          flat.push({ id: parent.id, name: parent.name, isChild: false });
+          for (const child of parent.children ?? []) {
+            flat.push({ id: child.id, name: child.name, isChild: true });
+          }
+        }
+        setCategories(flat);
+      })
+      .catch(() => {});
+  }, []);
 
   const toggleSelect = (id: number) => {
     setSelectedIds((prev) => {
@@ -64,8 +91,14 @@ export default function AdminProductsClient() {
   const selectAll   = () => setSelectedIds(new Set(products.map((p) => p.id)));
   const deselectAll = () => setSelectedIds(new Set());
 
-  const handleSelectAllChange = () => {
-    isAllSelected ? deselectAll() : selectAll();
+  const handleSelectAllChange = () => { isAllSelected ? deselectAll() : selectAll(); };
+
+  const hasFilters = !!(search || brandFilter || categoryFilter);
+  const clearFilters = () => {
+    setSearch("");
+    setBrandFilter("");
+    setCategoryFilter("");
+    setPage(1);
   };
 
   /* ── Data fetching ─────────────────────────────────────────────── */
@@ -73,7 +106,9 @@ export default function AdminProductsClient() {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page: String(page), search });
-      const res = await fetch(`/api/admin/products?${params}`);
+      if (brandFilter    !== "") params.set("brandId",    String(brandFilter));
+      if (categoryFilter !== "") params.set("categoryId", String(categoryFilter));
+      const res  = await fetch(`/api/admin/products?${params}`);
       const data = await res.json();
       setProducts(data.items ?? []);
       setTotal(data.total ?? 0);
@@ -83,7 +118,7 @@ export default function AdminProductsClient() {
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [page, search, brandFilter, categoryFilter]);
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
@@ -93,12 +128,8 @@ export default function AdminProductsClient() {
     setDeletingId(id);
     try {
       const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        toast.success("המוצר נמחק בהצלחה");
-        fetchProducts();
-      } else {
-        toast.error("שגיאה במחיקה");
-      }
+      if (res.ok) { toast.success("המוצר נמחק בהצלחה"); fetchProducts(); }
+      else          toast.error("שגיאה במחיקה");
     } finally {
       setDeletingId(null);
     }
@@ -117,21 +148,12 @@ export default function AdminProductsClient() {
       try {
         const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
         res.ok ? successCount++ : errorCount++;
-      } catch {
-        errorCount++;
-      }
+      } catch { errorCount++; }
     }
 
     setBulkDeleting(false);
-
-    if (successCount > 0) {
-      toast.success(`${successCount} מוצרים נמחקו בהצלחה`);
-      deselectAll();
-      fetchProducts();
-    }
-    if (errorCount > 0) {
-      toast.error(`${errorCount} מוצרים לא נמחקו עקב שגיאה`);
-    }
+    if (successCount > 0) { toast.success(`${successCount} מוצרים נמחקו בהצלחה`); deselectAll(); fetchProducts(); }
+    if (errorCount   > 0)   toast.error(`${errorCount} מוצרים לא נמחקו עקב שגיאה`);
   };
 
   /* ── Render ────────────────────────────────────────────────────── */
@@ -166,23 +188,88 @@ export default function AdminProductsClient() {
         />
       )}
 
-      {/* Search */}
-      <div className="bg-white rounded-xl border border-gray-100 p-4 mb-5 flex gap-3 items-center">
+      {/* Search + Filters */}
+      <div className="bg-white rounded-xl border border-gray-100 p-4 mb-5 flex flex-wrap gap-3 items-center">
+        {/* Search */}
         <Search className="h-5 w-5 text-gray-400 shrink-0" />
         <input
           type="text"
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           placeholder='חיפוש לפי שם, מק"ט...'
-          className="flex-1 outline-none text-base font-[Assistant]"
+          className="flex-1 min-w-[160px] outline-none text-base font-[Assistant]"
           dir="rtl"
         />
-        {search && (
-          <button onClick={() => setSearch("")} className="text-gray-400 hover:text-gray-600 text-sm">
+
+        {/* Divider */}
+        <div className="w-px h-6 bg-gray-200 shrink-0" />
+
+        {/* Brand filter */}
+        <div className="flex items-center gap-1.5">
+          <Filter className="h-4 w-4 text-gray-400 shrink-0" />
+          <select
+            value={brandFilter}
+            onChange={(e) => { setBrandFilter(e.target.value ? Number(e.target.value) : ""); setPage(1); }}
+            className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-[#c9a96e] bg-white text-gray-700 cursor-pointer"
+            dir="rtl"
+          >
+            <option value="">כל המותגים</option>
+            {brands.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name} ({b._count.products})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Category filter */}
+        <select
+          value={categoryFilter}
+          onChange={(e) => { setCategoryFilter(e.target.value ? Number(e.target.value) : ""); setPage(1); }}
+          className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-[#c9a96e] bg-white text-gray-700 cursor-pointer"
+          dir="rtl"
+        >
+          <option value="">כל הקטגוריות</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.isChild ? `  ↳ ${c.name}` : c.name}
+            </option>
+          ))}
+        </select>
+
+        {/* Clear all filters */}
+        {hasFilters && (
+          <button
+            onClick={clearFilters}
+            className="flex items-center gap-1 text-sm text-gray-400 hover:text-red-500 transition-colors"
+          >
+            <X className="h-3.5 w-3.5" />
             נקה
           </button>
         )}
       </div>
+
+      {/* Active filter tags */}
+      {(brandFilter !== "" || categoryFilter !== "") && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          {brandFilter !== "" && (
+            <span className="inline-flex items-center gap-1.5 text-xs bg-[#c9a96e]/10 text-[#9a7040] border border-[#c9a96e]/30 rounded-full px-3 py-1 font-semibold">
+              מותג: {brands.find((b) => b.id === brandFilter)?.name}
+              <button onClick={() => { setBrandFilter(""); setPage(1); }} className="hover:text-red-500">
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          )}
+          {categoryFilter !== "" && (
+            <span className="inline-flex items-center gap-1.5 text-xs bg-[#c9a96e]/10 text-[#9a7040] border border-[#c9a96e]/30 rounded-full px-3 py-1 font-semibold">
+              קטגוריה: {categories.find((c) => c.id === categoryFilter)?.name}
+              <button onClick={() => { setCategoryFilter(""); setPage(1); }} className="hover:text-red-500">
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Table */}
       <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
@@ -194,13 +281,17 @@ export default function AdminProductsClient() {
           <div className="text-center py-16 text-gray-500">
             <PackageIcon className="h-12 w-12 mx-auto mb-3 text-gray-200" />
             <p>לא נמצאו מוצרים</p>
+            {hasFilters && (
+              <button onClick={clearFilters} className="mt-3 text-sm text-[#c9a96e] hover:underline">
+                נקה סינון
+              </button>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="data-table">
               <thead>
                 <tr>
-                  {/* Select-all checkbox — first column = RIGHT in RTL */}
                   <th style={{ width: 44 }}>
                     <input
                       ref={selectAllRef}
@@ -225,11 +316,7 @@ export default function AdminProductsClient() {
                 {products.map((p) => {
                   const selected = selectedIds.has(p.id);
                   return (
-                    <tr
-                      key={p.id}
-                      style={selected ? { background: "rgba(59,130,246,0.07)" } : undefined}
-                    >
-                      {/* Checkbox cell */}
+                    <tr key={p.id} style={selected ? { background: "rgba(59,130,246,0.07)" } : undefined}>
                       <td onClick={(e) => e.stopPropagation()}>
                         <input
                           type="checkbox"
@@ -238,7 +325,6 @@ export default function AdminProductsClient() {
                           className="w-[18px] h-[18px] rounded cursor-pointer accent-[#c9a96e]"
                         />
                       </td>
-
                       <td>
                         <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-gray-50">
                           <Image
@@ -339,10 +425,7 @@ export default function AdminProductsClient() {
         )}
       </div>
 
-      {/* ── Bulk action bar ─────────────────────────────────────────
-          Floats above everything when items are selected.
-          Slides up when selectedIds.size > 0, slides down when 0.
-      ──────────────────────────────────────────────────────────── */}
+      {/* Bulk action bar */}
       <div
         dir="rtl"
         style={{
@@ -364,7 +447,6 @@ export default function AdminProductsClient() {
           pointerEvents: selectedIds.size > 0 ? "auto" : "none",
         }}
       >
-        {/* Count */}
         <span style={{ fontSize: 14, fontWeight: 600, color: "#e5e5e5" }}>
           נבחרו{" "}
           <span style={{ color: "#c9a96e", fontWeight: 800 }}>{selectedIds.size}</span>
@@ -373,46 +455,28 @@ export default function AdminProductsClient() {
 
         <div style={{ width: 1, height: 20, background: "#444" }} />
 
-        {/* Delete button */}
         <button
           onClick={handleBulkDelete}
           disabled={bulkDeleting}
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            background: "#dc2626",
-            color: "#fff",
-            border: "none",
-            borderRadius: 8,
-            padding: "6px 14px",
-            fontSize: 13,
-            fontWeight: 700,
+            display: "flex", alignItems: "center", gap: 6,
+            background: "#dc2626", color: "#fff", border: "none", borderRadius: 8,
+            padding: "6px 14px", fontSize: 13, fontWeight: 700,
             cursor: bulkDeleting ? "not-allowed" : "pointer",
-            opacity: bulkDeleting ? 0.6 : 1,
-            transition: "opacity 0.15s",
+            opacity: bulkDeleting ? 0.6 : 1, transition: "opacity 0.15s",
           }}
         >
           <Trash2 style={{ width: 14, height: 14 }} />
           {bulkDeleting ? "מוחק..." : "מחק נבחרים"}
         </button>
 
-        {/* Deselect button */}
         <button
           onClick={deselectAll}
           disabled={bulkDeleting}
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            background: "transparent",
-            color: "#aaa",
-            border: "1px solid #444",
-            borderRadius: 8,
-            padding: "6px 12px",
-            fontSize: 13,
-            fontWeight: 600,
-            cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 4,
+            background: "transparent", color: "#aaa", border: "1px solid #444", borderRadius: 8,
+            padding: "6px 12px", fontSize: 13, fontWeight: 600, cursor: "pointer",
             transition: "color 0.15s, border-color 0.15s",
           }}
           onMouseEnter={(e) => {

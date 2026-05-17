@@ -15,7 +15,8 @@ export async function GET(req: NextRequest) {
     const page = Math.max(1, parseInt(sp.get("page") ?? "1"));
     const pageSize = Math.min(50, parseInt(sp.get("pageSize") ?? "20"));
     const search = sp.get("search") ?? "";
-    const brandId = sp.get("brandId") ? parseInt(sp.get("brandId")!) : undefined;
+    const brandId    = sp.get("brandId")    ? parseInt(sp.get("brandId")!)    : undefined;
+    const categoryId = sp.get("categoryId") ? parseInt(sp.get("categoryId")!) : undefined;
     const stockStatus = sp.get("stockStatus") ?? undefined;
 
     const where: Record<string, unknown> = {};
@@ -25,7 +26,8 @@ export async function GET(req: NextRequest) {
         { sku: { contains: search } },
       ];
     }
-    if (brandId) where.brandId = brandId;
+    if (brandId)    where.brandId = brandId;
+    if (categoryId) where.productCategories = { some: { categoryId } };
     if (stockStatus) where.stockStatus = stockStatus;
 
     const [items, total] = await Promise.all([
