@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
@@ -14,6 +15,9 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, className }: ProductCardProps) {
   const addItem = useCartStore((s) => s.addItem);
+  const [imgSrc, setImgSrc] = useState(
+    product.image1 ?? `https://placehold.co/400x400/f8f8f8/cccccc?text=${encodeURIComponent(product.brand.name)}`
+  );
 
   const isOutOfStock = product.stockStatus === "out_of_stock";
   const hasSale = product.salePrice !== null && product.salePrice < product.price;
@@ -45,12 +49,15 @@ export default function ProductCard({ product, className }: ProductCardProps) {
       <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", background: "#f8f8f8" }}>
         <Link href={`/product/${product.slug}`} className="block absolute inset-0">
           <Image
-            src={product.image1 ?? `https://placehold.co/400x400/f8f8f8/cccccc?text=${encodeURIComponent(product.brand.name)}`}
+            src={imgSrc}
             alt={product.name}
             fill
             className="object-contain"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            unoptimized={!product.image1}
+            unoptimized
+            onError={() =>
+              setImgSrc(`https://placehold.co/400x400/f8f8f8/cccccc?text=${encodeURIComponent(product.brand.name)}`)
+            }
           />
         </Link>
 
