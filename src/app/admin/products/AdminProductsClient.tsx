@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Search, Edit, Trash2, Eye, FileSpreadsheet, X, Filter } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Eye, FileSpreadsheet, X, Filter, RefreshCw } from "lucide-react";
 import { formatPrice, getPlaceholderImage, STOCK_STATUS_LABELS, formatDateTime } from "@/lib/utils";
 import { toast } from "@/components/ui/Toast";
 import Badge from "@/components/ui/Badge";
@@ -37,6 +37,7 @@ export default function AdminProductsClient() {
   const [totalPages, setTotalPages]   = useState(1);
   const [deletingId, setDeletingId]   = useState<number | null>(null);
   const [showImport, setShowImport]   = useState(false);
+  const [reuploading, setReuploading] = useState(false);
 
   /* ── Filter state ──────────────────────────────────────────────── */
   const [brandFilter, setBrandFilter]       = useState<number | "">("");
@@ -156,6 +157,38 @@ export default function AdminProductsClient() {
     if (errorCount   > 0)   toast.error(`${errorCount} מוצרים לא נמחקו עקב שגיאה`);
   };
 
+  /* ── Re-upload images to Supabase Storage ─────────────────────── */
+  const handleReuploadImages = async () => {
+    if (!confirm("העלאת תמונות מחדש ל-Supabase Storage. הפעולה עשויה לקחת כמה דקות. להמשיך?")) return;
+    setReuploading(true);
+    let offset = 0;
+    let totalUploaded = 0;
+    let totalFailed = 0;
+    try {
+      while (true) {
+        const res = await fetch("/api/admin/reupload-images", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ limit: 30, offset }),
+        });
+        const data = await res.json();
+        if (!res.ok) { toast.error(`שגיאה: ${data.error}`); break; }
+        totalUploaded += data.uploaded ?? 0;
+        totalFailed   += data.failed   ?? 0;
+        if (data.processed === 0 || data.totalRemaining === 0) break;
+        offset += data.processed;
+      }
+      if (totalUploaded > 0) {
+        toast.success(`${totalUploaded} תמונות הועלו ל-Supabase Storage בהצלחה`);
+        fetchProducts();
+      }
+      if (totalFailed > 0) toast.error(`${totalFailed} תמונות נכשלו`);
+      if (totalUploaded === 0 && totalFailed === 0) toast.success("כל התמונות כבר ב-Supabase Storage");
+    } finally {
+      setReuploading(false);
+    }
+  };
+
   /* ── Render ────────────────────────────────────────────────────── */
   return (
     <div className="p-6 lg:p-8" dir="rtl">
@@ -167,6 +200,15 @@ export default function AdminProductsClient() {
           <p className="text-gray-500 text-sm mt-1">{total} מוצרים במערכת</p>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={handleReuploadImages}
+            disabled={reuploading}
+            className="flex items-center gap-2 text-sm px-4 py-2.5 border border-gray-200 rounded-lg text-gray-700 hover:border-blue-400 hover:text-blue-600 font-bold transition-all disabled:opacity-50"
+            title="העלה תמונות מחדש ל-Supabase Storage"
+          >
+            <RefreshCw className={`h-4 w-4 ${reuploading ? "animate-spin" : ""}`} />
+            {reuploading ? "מעלה תמונות..." : "העלאת תמונות מחדש"}
+          </button>
           <button
             onClick={() => setShowImport(true)}
             className="flex items-center gap-2 text-sm px-4 py-2.5 border border-gray-200 rounded-lg text-gray-700 hover:border-[#c9a96e] hover:text-[#c9a96e] font-bold transition-all"

@@ -1,7 +1,6 @@
 import { getSupabaseAdmin } from "./client";
 
 const BUCKET = "products";
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 
 export async function uploadImageFromUrl(
   externalUrl: string,
@@ -44,8 +43,13 @@ export async function uploadImageFromUrl(
 
     console.log(`[upload] Upload successful. Path:`, uploadData?.path);
 
-    // 3. Build public URL explicitly
-    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${fileName}`;
+    // 3. Build public URL explicitly — read at call time so env var is always resolved
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!supabaseUrl) {
+      console.error(`[upload] NEXT_PUBLIC_SUPABASE_URL not set — cannot build public URL`);
+      return externalUrl;
+    }
+    const publicUrl = `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${fileName}`;
     console.log(`[upload] Public URL: ${publicUrl}`);
 
     return publicUrl;
