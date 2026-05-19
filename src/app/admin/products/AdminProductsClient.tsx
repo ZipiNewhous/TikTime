@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Search, Edit, Trash2, Eye, FileSpreadsheet, X, Filter, RefreshCw } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Eye, FileSpreadsheet, X, Filter, RefreshCw, Trash } from "lucide-react";
 import { formatPrice, getPlaceholderImage, STOCK_STATUS_LABELS, formatDateTime } from "@/lib/utils";
 import { toast } from "@/components/ui/Toast";
 import Badge from "@/components/ui/Badge";
@@ -37,7 +37,8 @@ export default function AdminProductsClient() {
   const [totalPages, setTotalPages]   = useState(1);
   const [deletingId, setDeletingId]   = useState<number | null>(null);
   const [showImport, setShowImport]   = useState(false);
-  const [reuploading, setReuploading] = useState(false);
+  const [reuploading, setReuploading]   = useState(false);
+  const [deletingAll, setDeletingAll]   = useState(false);
 
   /* ── Filter state ──────────────────────────────────────────────── */
   const [brandFilter, setBrandFilter]       = useState<number | "">("");
@@ -189,6 +190,25 @@ export default function AdminProductsClient() {
     }
   };
 
+  /* ── Delete all products ──────────────────────────────────────── */
+  const handleDeleteAll = async () => {
+    if (!confirm(`האם למחוק את כל ${total} המוצרים? פעולה זו בלתי הפיכה לחלוטין.`)) return;
+    if (!confirm("אישור נוסף: כל המוצרים יימחקו לצמיתות. להמשיך?")) return;
+    setDeletingAll(true);
+    try {
+      const res = await fetch("/api/admin/clear-products", { method: "DELETE" });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(`${data.deleted} מוצרים נמחקו בהצלחה`);
+        fetchProducts();
+      } else {
+        toast.error("שגיאה במחיקת כל המוצרים");
+      }
+    } finally {
+      setDeletingAll(false);
+    }
+  };
+
   /* ── Render ────────────────────────────────────────────────────── */
   return (
     <div className="p-6 lg:p-8" dir="rtl">
@@ -200,6 +220,15 @@ export default function AdminProductsClient() {
           <p className="text-gray-500 text-sm mt-1">{total} מוצרים במערכת</p>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={handleDeleteAll}
+            disabled={deletingAll || total === 0}
+            className="flex items-center gap-2 text-sm px-4 py-2.5 border border-red-200 rounded-lg text-red-600 hover:bg-red-50 hover:border-red-400 font-bold transition-all disabled:opacity-50"
+            title="מחק את כל המוצרים"
+          >
+            <Trash className={`h-4 w-4 ${deletingAll ? "animate-pulse" : ""}`} />
+            {deletingAll ? "מוחק הכל..." : "מחק הכל"}
+          </button>
           <button
             onClick={handleReuploadImages}
             disabled={reuploading}
