@@ -25,6 +25,9 @@ interface CategoryPageClientProps {
   brandsInCategory: Brand[];
   priceRange: { min: number; max: number };
   initialSearchParams: Record<string, string | string[]>;
+  initialProducts: ProductWithRelations[];
+  initialTotal: number;
+  initialHasMore: boolean;
 }
 
 const PAGE_SIZE = 24;
@@ -50,21 +53,25 @@ const SORT_MAP: Record<string, string> = {
 export default function CategoryPageClient({
   category,
   brandsInCategory,
+  initialProducts,
+  initialTotal,
+  initialHasMore,
 }: CategoryPageClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [products, setProducts] = useState<ProductWithRelations[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<ProductWithRelations[]>(initialProducts);
+  const [total, setTotal] = useState(initialTotal);
+  const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(false);
+  const [hasMore, setHasMore] = useState(initialHasMore);
   const [filterOpen, setFilterOpen] = useState(false);
 
   const pageRef = useRef(1);
   const isFetchingRef = useRef(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const skipNextFetch = useRef(true); // skip first effect run — server already provided data
 
   const sort = searchParams.get("sort") ?? "price_asc";
   const selectedBrands = searchParams.getAll("brandId").map(Number);
@@ -102,6 +109,10 @@ export default function CategoryPageClient({
 
   // Reset and load page 1 whenever filters/sort change
   useEffect(() => {
+    if (skipNextFetch.current) {
+      skipNextFetch.current = false;
+      return;
+    }
     pageRef.current = 1;
     isFetchingRef.current = false;
     setLoading(true);
