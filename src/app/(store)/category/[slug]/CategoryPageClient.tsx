@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import ProductCard from "@/components/store/ProductCard";
 import { SlidersHorizontal, X, ChevronDown } from "lucide-react";
@@ -27,6 +27,8 @@ interface CategoryPageClientProps {
   initialSearchParams: Record<string, string | string[]>;
 }
 
+const PAGE_SIZE = 24;
+
 const SORT_OPTIONS = [
   { value: "price_asc",  label: "מהזול ליקר" },
   { value: "price_desc", label: "מהיקר לזול" },
@@ -35,6 +37,15 @@ const SORT_OPTIONS = [
   { value: "popular",    label: "הפופולריים ביותר" },
   { value: "newest",     label: "הנמכרים ביותר" },
 ];
+
+const SORT_MAP: Record<string, string> = {
+  price_asc: "price_asc",
+  price_desc: "price_desc",
+  name_asc: "name_asc",
+  name_desc: "name_desc",
+  popular: "newest",
+  newest: "newest",
+};
 
 export default function CategoryPageClient({
   category,
@@ -46,21 +57,25 @@ export default function CategoryPageClient({
 
   const [products, setProducts] = useState<ProductWithRelations[]>([]);
   const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
 
-  const page = parseInt(searchParams.get("page") ?? "1");
+  const pageRef = useRef(1);
+  const isFetchingRef = useRef(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
   const sort = searchParams.get("sort") ?? "price_asc";
   const selectedBrands = searchParams.getAll("brandId").map(Number);
   const inStock = searchParams.get("inStock") === "true";
+  const filterKey = searchParams.toString();
 
   const updateParam = useCallback(
     (key: string, value: string | null) => {
       const params = new URLSearchParams(searchParams.toString());
       if (value === null) params.delete(key);
       else params.set(key, value);
-      params.delete("page");
       router.push(`${pathname}?${params.toString()}`);
     },
     [searchParams, pathname, router]
@@ -78,7 +93,6 @@ export default function CategoryPageClient({
       } else {
         params.append("brandId", s);
       }
-      params.delete("page");
       router.push(`${pathname}?${params.toString()}`);
     },
     [searchParams, pathname, router]
@@ -86,34 +100,73 @@ export default function CategoryPageClient({
 
   const clearFilters = useCallback(() => router.push(pathname), [pathname, router]);
 
+  // Reset and load page 1 whenever filters/sort change
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const params = new URLSearchParams(searchParams.toString());
-        params.set("category", category.slug);
-        const sortMap: Record<string, string> = {
-          price_asc: "price_asc",
-          price_desc: "price_desc",
-          name_asc: "name_asc",
-          name_desc: "name_desc",
-          popular: "newest",
-          newest: "newest",
-        };
-        params.set("sort", sortMap[sort] ?? "price_asc");
-        const res = await fetch(`/api/products?${params}`);
-        const data = await res.json();
+    pageRef.current = 1;
+    isFetchingRef.current = false;
+    setLoading(true);
+    setProducts([]);
+    setHasMore(false);
+
+    const params = new URLSearchParams(filterKey);
+    params.set("category", category.slug);
+    params.set("sort", SORT_MAP[sort] ?? "price_asc");
+    params.set("page", "1");
+    params.set("pageSize", String(PAGE_SIZE));
+
+    let cancelled = false;
+    fetch(`/api/products?${params}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
         setProducts(data.items ?? []);
         setTotal(data.total ?? 0);
-        setTotalPages(data.totalPages ?? 1);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, [searchParams, category.slug, sort]);
+        setHasMore(1 < (data.totalPages ?? 1));
+      })
+      .catch(console.error)
+      .finally(() => { if (!cancelled) setLoading(false); });
+
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterKey, category.slug]);
+
+  const loadMore = useCallback(async () => {
+    if (isFetchingRef.current || !hasMore || loading) return;
+    isFetchingRef.current = true;
+    const nextPage = pageRef.current + 1;
+    pageRef.current = nextPage;
+    setLoadingMore(true);
+
+    try {
+      const params = new URLSearchParams(filterKey);
+      params.set("category", category.slug);
+      params.set("sort", SORT_MAP[sort] ?? "price_asc");
+      params.set("page", String(nextPage));
+      params.set("pageSize", String(PAGE_SIZE));
+      const res = await fetch(`/api/products?${params}`);
+      const data = await res.json();
+      setProducts((prev) => [...prev, ...(data.items ?? [])]);
+      setHasMore(nextPage < (data.totalPages ?? 1));
+    } catch (err) {
+      console.error(err);
+      pageRef.current--;
+    } finally {
+      setLoadingMore(false);
+      isFetchingRef.current = false;
+    }
+  }, [hasMore, loading, filterKey, category.slug, sort]);
+
+  // Observe sentinel to trigger loadMore
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      (entries) => { if (entries[0].isIntersecting) loadMore(); },
+      { rootMargin: "400px" }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   const hasActiveFilters = selectedBrands.length > 0 || inStock;
 
@@ -186,7 +239,7 @@ export default function CategoryPageClient({
   return (
     <div className="min-h-screen bg-white" dir="rtl">
 
-      {/* Breadcrumb — קטלוג / [Category Name] */}
+      {/* Breadcrumb */}
       <div className="bg-white border-b border-[#e8e8e8]">
         <div className="max-w-[1400px] mx-auto px-4 py-3">
           <nav className="flex items-center gap-1.5 text-sm text-gray-400" dir="rtl">
@@ -199,10 +252,9 @@ export default function CategoryPageClient({
 
       <div className="max-w-[1400px] mx-auto px-4 py-6">
 
-        {/* Filter bar — סינון מאפיינים (right) | מיין לפי (left) */}
+        {/* Filter bar */}
         <div className="flex items-center justify-between mb-6 border-b border-[#e8e8e8] pb-4" dir="rtl">
 
-          {/* Right side: Filter properties button */}
           <button
             onClick={() => setFilterOpen(true)}
             className="flex items-center gap-2 border border-[#333] px-4 py-2 text-sm font-semibold text-[#333] hover:bg-[#333] hover:text-white transition-colors"
@@ -216,7 +268,6 @@ export default function CategoryPageClient({
             )}
           </button>
 
-          {/* Left side: Sort by + product count */}
           <div className="flex items-center gap-4">
             <p className="text-gray-400 text-sm hidden sm:block">
               {loading ? "טוען..." : `${total} מוצרים`}
@@ -237,7 +288,7 @@ export default function CategoryPageClient({
           </div>
         </div>
 
-        {/* Product grid — 4 cols desktop, 2 cols tablet+mobile, full width, no sidebar */}
+        {/* Product grid */}
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[...Array(8)].map((_, i) => (
@@ -271,21 +322,12 @@ export default function CategoryPageClient({
               ))}
             </div>
 
-            {totalPages > 1 && (
-              <div className="flex justify-center gap-2 mt-10">
-                {[...Array(totalPages)].map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => updateParam("page", String(i + 1))}
-                    className={`w-10 h-10 font-bold text-sm transition-colors border ${
-                      page === i + 1
-                        ? "bg-[#c9a96e] text-white border-[#c9a96e]"
-                        : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+            {/* Infinite scroll sentinel */}
+            <div ref={sentinelRef} className="h-1" />
+
+            {loadingMore && (
+              <div className="flex justify-center py-8">
+                <div className="w-8 h-8 border-2 border-[#c9a96e] border-t-transparent rounded-full animate-spin" />
               </div>
             )}
           </>

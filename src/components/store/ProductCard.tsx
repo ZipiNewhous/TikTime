@@ -45,8 +45,8 @@ export default function ProductCard({ product, className }: ProductCardProps) {
       className={className}
       style={{ background: "#fff", border: "1px solid #e8e8e8", borderRadius: "4px", padding: "12px" }}
     >
-      {/* Image — 1:1 square, bg #f8f8f8 */}
-      <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", background: "#f8f8f8" }}>
+      {/* Image — 1:1 square, bg #ffffff */}
+      <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", background: "#ffffff" }}>
         <Link href={`/product/${product.slug}`} className="block absolute inset-0">
           <Image
             src={imgSrc}
