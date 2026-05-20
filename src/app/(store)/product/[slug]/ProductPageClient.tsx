@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart, Star, Shield, Truck, RotateCcw } from "lucide-react";
@@ -42,6 +42,34 @@ export default function ProductPageClient({ product, specs }: ProductPageClientP
 
   const images = [product.image1, product.image2, product.image3].filter(Boolean) as string[];
   const displayImage = images[selectedImage] ?? getPlaceholderImage(600, 600, product.name);
+
+  const lensRef = useRef<HTMLDivElement>(null);
+  const LENS_R = 85; // radius in px
+
+  // Keep lens background in sync when selected image changes
+  useEffect(() => {
+    if (lensRef.current) {
+      lensRef.current.style.backgroundImage = `url(${displayImage})`;
+    }
+  }, [displayImage]);
+
+  const handleImageMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const lens = lensRef.current;
+    if (!lens) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const rawX = e.clientX - rect.left;
+    const rawY = e.clientY - rect.top;
+    const cx = Math.max(LENS_R, Math.min(rect.width  - LENS_R, rawX));
+    const cy = Math.max(LENS_R, Math.min(rect.height - LENS_R, rawY));
+    lens.style.display = "block";
+    lens.style.left = `${cx - LENS_R}px`;
+    lens.style.top  = `${cy - LENS_R}px`;
+    lens.style.backgroundPosition = `${(rawX / rect.width) * 100}% ${(rawY / rect.height) * 100}%`;
+  };
+
+  const handleImageMouseLeave = () => {
+    if (lensRef.current) lensRef.current.style.display = "none";
+  };
 
   const isOutOfStock = product.stockStatus === "out_of_stock";
   const hasSale = product.salePrice !== null && product.salePrice < product.price;
@@ -95,7 +123,11 @@ export default function ProductPageClient({ product, specs }: ProductPageClientP
         {/* LEFT: Gallery */}
         <div className="flex flex-col gap-4">
           {/* Main Image */}
-          <div className="relative aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
+          <div
+            className="relative aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 cursor-crosshair"
+            onMouseMove={handleImageMouseMove}
+            onMouseLeave={handleImageMouseLeave}
+          >
             <Image
               src={displayImage}
               alt={product.name}
@@ -109,6 +141,21 @@ export default function ProductPageClient({ product, specs }: ProductPageClientP
                 <Badge variant="red">-{discountPercent}%</Badge>
               </div>
             )}
+
+            {/* Circular magnifier lens */}
+            <div
+              ref={lensRef}
+              className="absolute pointer-events-none rounded-full z-20"
+              style={{
+                display: "none",
+                width: LENS_R * 2,
+                height: LENS_R * 2,
+                backgroundImage: `url(${displayImage})`,
+                backgroundSize: "300% 300%",
+                backgroundRepeat: "no-repeat",
+                boxShadow: "0 0 0 2px #fff, 0 4px 24px rgba(0,0,0,0.18)",
+              }}
+            />
           </div>
 
           {/* Thumbnails */}
