@@ -54,7 +54,6 @@ export default function CartPage() {
                   alt={item.name}
                   fill
                   className="object-cover"
-                  unoptimized={!item.image}
                 />
               </div>
 

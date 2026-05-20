@@ -109,7 +109,6 @@ export default function SearchBar({ onClose }: SearchBarProps) {
                     alt={item.name}
                     fill
                     className="object-cover"
-                    unoptimized={!item.image1}
                   />
                 </div>
                 <div className="flex-1 min-w-0">

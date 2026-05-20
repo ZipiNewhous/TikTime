@@ -74,7 +74,6 @@ export default function HeroSection() {
           fill
           className="object-cover object-center"
           priority={current === 0}
-          unoptimized
           onError={() => setImgError((e) => ({ ...e, [current]: true }))}
         />
       ) : (
@@ -98,7 +97,6 @@ export default function HeroSection() {
               alt="TikTime Collection"
               fill
               className="object-cover object-center"
-              unoptimized
               onError={() =>
                 setImgError((e) => ({ ...e, [incoming as number]: true }))
               }

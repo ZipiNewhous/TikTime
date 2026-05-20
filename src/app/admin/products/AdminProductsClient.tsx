@@ -403,7 +403,6 @@ export default function AdminProductsClient() {
                             alt={p.name}
                             fill
                             className="object-cover"
-                            unoptimized={!p.image1}
                           />
                         </div>
                       </td>

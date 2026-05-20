@@ -103,7 +103,6 @@ export default function ProductPageClient({ product, specs }: ProductPageClientP
               className="object-contain p-4"
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
-              unoptimized
             />
             {hasSale && (
               <div className="absolute top-4 right-4">
@@ -129,7 +128,6 @@ export default function ProductPageClient({ product, specs }: ProductPageClientP
                     alt={`${product.name} ${i + 1}`}
                     fill
                     className="object-contain p-1"
-                    unoptimized
                   />
                 </button>
               ))}

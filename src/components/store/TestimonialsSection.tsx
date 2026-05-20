@@ -113,7 +113,6 @@ export default function TestimonialsSection() {
                   alt=""
                   width={58}
                   height={40}
-                  unoptimized
                   aria-hidden="true"
                   style={{ display: "inline-block" }}
                 />

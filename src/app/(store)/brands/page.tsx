@@ -73,7 +73,6 @@ export default async function BrandsPage() {
                       width={60}
                       height={44}
                       className="object-contain"
-                      unoptimized
                     />
                   ) : (
                     <span className="text-xl font-black text-[#c9a96e]">

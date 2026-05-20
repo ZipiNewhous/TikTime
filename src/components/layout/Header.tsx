@@ -83,7 +83,6 @@ export default function Header() {
                 height={50}
                 className="h-[50px] w-auto object-contain"
                 priority
-                unoptimized
               />
             </Link>
 
@@ -189,7 +188,6 @@ export default function Header() {
                 width={100}
                 height={38}
                 className="h-9 w-auto"
-                unoptimized
               />
               <button onClick={() => setMobileOpen(false)} className="text-gray-500 hover:text-gray-800">
                 <X className="h-6 w-6" />

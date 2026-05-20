@@ -57,7 +57,6 @@ export default function AdminLoginPage() {
             width={120}
             height={46}
             className="h-10 w-auto object-contain mx-auto brightness-0 invert mb-3"
-            unoptimized
           />
           <p className="text-[#c9a96e] font-semibold text-sm">מערכת ניהול</p>
         </div>

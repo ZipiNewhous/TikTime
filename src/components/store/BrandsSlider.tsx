@@ -59,7 +59,6 @@ function BrandItem({ name, slug, logo }: { name: string; slug: string; logo: str
             alt={name}
             fill
             className="object-contain"
-            unoptimized
             onError={() => setError(true)}
           />
         </div>

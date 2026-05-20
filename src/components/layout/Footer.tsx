@@ -158,7 +158,6 @@ export default function Footer() {
               width={120}
               height={46}
               className="h-11 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
-              unoptimized
             />
           </Link>
 

@@ -50,7 +50,6 @@ export default function AdminSidebar() {
             width={80}
             height={30}
             className="h-7 w-auto object-contain brightness-0 invert"
-            unoptimized
           />
           <span className="text-white font-bold text-sm opacity-60">Admin</span>
         </Link>

@@ -111,7 +111,6 @@ export default function OrderDetailClient({ order: initialOrder }: { order: Orde
                       alt={item.productName}
                       fill
                       className="object-cover"
-                      unoptimized={!item.product?.image1}
                     />
                   </div>
                   <div className="flex-1 min-w-0">
