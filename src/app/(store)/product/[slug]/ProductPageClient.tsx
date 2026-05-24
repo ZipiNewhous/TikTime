@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, Star, Shield, Truck, RotateCcw } from "lucide-react";
+import { ShoppingCart, Shield, Truck, RotateCcw } from "lucide-react";
 import { useCartStore } from "@/lib/store/cartStore";
 import { toast } from "@/components/ui/Toast";
 import { formatPrice, getPlaceholderImage } from "@/lib/utils";
@@ -103,7 +103,7 @@ export default function ProductPageClient({ product, specs }: ProductPageClientP
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-[1100px] mx-auto px-6 py-8">
       {/* Breadcrumb — בית > [category] > [product] */}
       <nav className="flex items-center gap-2 text-sm text-gray-400 mb-6" dir="rtl">
         <Link href="/" className="hover:text-[#222222] transition-colors">בית</Link>
@@ -280,13 +280,6 @@ export default function ProductPageClient({ product, specs }: ProductPageClientP
             ))}
           </div>
 
-          {/* Star rating placeholder */}
-          <div className="flex items-center gap-1">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="h-4 w-4 fill-[#c9a96e] text-[#c9a96e]" />
-            ))}
-            <span className="text-sm text-gray-500 mr-2">4.9 (120 ביקורות)</span>
-          </div>
         </div>
       </div>
 

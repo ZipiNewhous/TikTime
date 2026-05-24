@@ -252,7 +252,7 @@ export default function CategoryPageClient({
 
       {/* Breadcrumb */}
       <div className="bg-white border-b border-[#e8e8e8]">
-        <div className="max-w-[1400px] mx-auto px-4 py-3">
+        <div className="max-w-[1200px] mx-auto px-4 py-3">
           <nav className="flex items-center gap-1.5 text-sm text-gray-400" dir="rtl">
             <Link href="/shop" className="hover:text-[#222] transition-colors">קטלוג</Link>
             <span className="text-gray-300">/</span>
@@ -261,7 +261,7 @@ export default function CategoryPageClient({
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-4 py-6">
+      <div className="max-w-[1200px] mx-auto px-4 py-6">
 
         {/* Filter bar */}
         <div className="flex items-center justify-between mb-6 border-b border-[#e8e8e8] pb-4" dir="rtl">
