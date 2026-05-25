@@ -104,7 +104,7 @@ export default function ContactPage() {
                   {
                     icon: <Clock className="h-5 w-5" />,
                     title: "שעות פעילות",
-                    content: "א׳–ה׳: 09:00–16:00",
+                    content: "ראשון–חמישי: 09:00–16:00",
                   },
                 ].map((item) => (
                   <div key={item.title} className="flex items-start gap-4">

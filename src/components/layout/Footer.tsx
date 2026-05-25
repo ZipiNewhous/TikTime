@@ -124,7 +124,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2 text-white/55 text-sm">
                 <Clock className="h-4 w-4 shrink-0" />
-                <span>א׳–ה׳: 09:00–16:00</span>
+                <span>ראשון–חמישי: 09:00–16:00</span>
               </li>
             </ul>
 

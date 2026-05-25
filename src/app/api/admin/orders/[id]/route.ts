@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     },
   });
 
-  if (!order) return NextResponse.json({ error: "׳”׳–׳׳ ׳” ׳׳ ׳ ׳׳¦׳׳”" }, { status: 404 });
+  if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
   return NextResponse.json(order);
 }
 
@@ -44,6 +44,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ success: true, order });
   } catch (err) {
     console.error("[PATCH /api/admin/orders/[id]]", err);
-    return NextResponse.json({ error: "׳©׳’׳™׳׳” ׳‘׳¢׳“׳›׳•׳ ׳”׳”׳–׳׳ ׳”" }, { status: 500 });
+    return NextResponse.json({ error: "Error updating order" }, { status: 500 });
   }
 }
