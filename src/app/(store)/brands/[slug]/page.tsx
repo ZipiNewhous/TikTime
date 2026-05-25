@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -14,10 +14,10 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const brand = await prisma.brand.findUnique({ where: { slug } });
-  if (!brand) return { title: "׳׳•׳×׳’ ׳׳ ׳ ׳׳¦׳" };
+  if (!brand) return { title: "מותג לא נמצא" };
   return {
     title: `${brand.name} | TikTime`,
-    description: brand.description ?? `׳§׳•׳׳§׳¦׳™׳™׳× ׳©׳¢׳•׳ ׳™ ${brand.name}`,
+    description: brand.description ?? `קולקציית שעוני ${brand.name} - שעוני יוקרה מקוריים`,
   };
 }
 
@@ -41,12 +41,11 @@ export default async function BrandPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      {/* Brand Hero */}
       <div className="bg-[#222021] text-white py-12">
         <div className="max-w-7xl mx-auto px-4">
           <Link href="/brands" className="flex items-center gap-2 text-gray-400 hover:text-white text-sm mb-6 w-fit">
             <ArrowRight className="h-4 w-4" />
-            ׳›׳ ׳”׳׳•׳×׳’׳™׳
+            כל המותגים
           </Link>
           <div className="flex items-center gap-6">
             {brand.logo ? (
@@ -61,19 +60,18 @@ export default async function BrandPage({ params }: Props) {
               {brand.description && (
                 <p className="text-gray-400 mt-2 max-w-xl">{brand.description}</p>
               )}
-              <p className="text-[#c9a96e] font-bold mt-2">{brand.products.length} ׳׳•׳¦׳¨׳™׳</p>
+              <p className="text-[#c9a96e] font-bold mt-2">{brand.products.length} מוצרים</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Products */}
       <div className="max-w-7xl mx-auto px-4 py-10">
         {brand.products.length === 0 ? (
           <div className="text-center py-20 text-gray-500">
-            <p className="text-lg">׳׳™׳ ׳׳•׳¦׳¨׳™׳ ׳–׳׳™׳ ׳™׳ ׳›׳¨׳’׳¢</p>
+            <p className="text-lg">אין מוצרים זמינים כרגע</p>
             <Link href="/" className="btn-gold mt-4 px-6 py-3 inline-block font-bold">
-              ׳—׳–׳¨׳” ׳׳—׳ ׳•׳×
+              חזרה לחנות
             </Link>
           </div>
         ) : (

@@ -92,24 +92,19 @@ export default function ContactPage() {
               <div className="flex flex-col gap-5">
                 {[
                   {
-                    icon: <MapPin className="h-5 w-5" />,
-                    title: "כתובת",
-                    content: "רחוב דיזנגוף 100, תל אביב",
-                  },
-                  {
                     icon: <Phone className="h-5 w-5" />,
                     title: "טלפון",
-                    content: "03-1234567",
+                    content: "054-8452098",
                   },
                   {
                     icon: <Mail className="h-5 w-5" />,
                     title: "אימייל",
-                    content: "info@tiktime.co.il",
+                    content: "tiktime10@gmail.com",
                   },
                   {
                     icon: <Clock className="h-5 w-5" />,
                     title: "שעות פעילות",
-                    content: "א׳–ה׳ 10:00–19:00 | ו׳ 10:00–14:00",
+                    content: "א׳–ה׳: 09:00–16:00",
                   },
                 ].map((item) => (
                   <div key={item.title} className="flex items-start gap-4">
@@ -127,7 +122,7 @@ export default function ContactPage() {
 
             {/* WhatsApp CTA */}
             <a
-              href="https://wa.me/9721234567"
+              href="https://wa.me/972548452098"
               target="_blank"
               rel="noreferrer"
               className="bg-green-500 hover:bg-green-600 text-white rounded-2xl p-6 flex items-center gap-4 transition-colors"

@@ -3,7 +3,10 @@ export const dynamic = 'force-dynamic';
 import { Suspense } from "react";
 import SearchPageClient from "./SearchPageClient";
 
-export const metadata = { title: "חיפוש | TikTime" };
+export const metadata = {
+  title: "חיפוש | TikTime",
+  robots: { index: false, follow: true },
+};
 
 export default function SearchPage() {
   return (
