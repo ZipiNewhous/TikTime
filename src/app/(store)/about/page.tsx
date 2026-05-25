@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "אודות | TikTime",
-  description: "TikTime - מומחים לשעונים יוקרתיים מאז 2010",
+  description: "TikTime - הבית הירושלמי לשעוני יוקרה ומותגים",
 };
 
 export default function AboutPage() {
@@ -12,76 +12,37 @@ export default function AboutPage() {
       {/* Hero */}
       <div className="bg-[#222021] text-white py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl font-black mb-4">אודות TikTime</h1>
-          <p className="text-gray-400 text-xl">מומחים לשעונים יוקרתיים מאז 2010</p>
+          <h1 className="text-4xl font-black mb-4">קצת עלינו</h1>
+          <p className="text-gray-400 text-xl">הבית הירושלמי לשעוני יוקרה ומותגים</p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-14">
-        {/* Story */}
-        <section className="mb-14">
-          <h2 className="text-2xl font-black text-[#222021] mb-4">הסיפור שלנו</h2>
-          <div className="h-1 w-16 bg-[#c9a96e] mb-6" />
-          <p className="text-gray-700 text-lg leading-relaxed mb-4">
-            TikTime נוסדה מתוך אהבה אמיתית לשעונים יוקרתיים ומתוך הבנה שכל שעון הוא יותר מסתם מכשיר — הוא ביטוי לאישיות, להצלחה ולסגנון חיים.
-          </p>
-          <p className="text-gray-700 text-lg leading-relaxed mb-4">
-            מאז 2010 אנו מביאים ללקוחותינו את הקולקציות המובחרות ביותר מבתי האופנה והשעונות המובילים בעולם — Rolex, Omega, TAG Heuer, Longines ועוד.
-          </p>
-          <p className="text-gray-700 text-lg leading-relaxed">
-            הצוות שלנו מורכב ממומחים עם עשרות שנות ניסיון, שיעזרו לכם למצוא את השעון המושלם לכל אירוע ולכל רגע.
-          </p>
-        </section>
+      <div className="max-w-3xl mx-auto px-6 py-14">
+        <div className="h-1 w-16 bg-[#c9a96e] mb-10" />
 
-        {/* Values */}
-        <section className="mb-14">
-          <h2 className="text-2xl font-black text-[#222021] mb-4">הערכים שלנו</h2>
-          <div className="h-1 w-16 bg-[#c9a96e] mb-8" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: "💎",
-                title: "אותנטיות",
-                desc: "כל מוצר במלאי שלנו מקורי ומלווה בתעודת אחריות יצרן",
-              },
-              {
-                icon: "🤝",
-                title: "שירות אישי",
-                desc: "הצוות שלנו זמין לכם בכל שאלה, לפני ואחרי הרכישה",
-              },
-              {
-                icon: "✨",
-                title: "איכות ללא פשרות",
-                desc: "אנו בוחרים רק את המוצרים הטובים ביותר עבור לקוחותינו",
-              },
-            ].map((v) => (
-              <div key={v.title} className="bg-gray-50 rounded-2xl p-6 text-center">
-                <div className="text-4xl mb-4">{v.icon}</div>
-                <h3 className="font-bold text-[#222021] text-lg mb-2">{v.title}</h3>
-                <p className="text-gray-600 text-sm">{v.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <div className="flex flex-col gap-6 text-gray-700 text-lg leading-relaxed">
+          <p>
+            ברוכים הבאים ל־<strong>TIK-TIME – שעוני יוקרה ומותגים</strong>, הבית הירושלמי לאוהבי שעוני יד שמבינים שזמן הוא הרבה יותר ממספרים – הוא אמירה, הוא סגנון, הוא זהות.
+          </p>
 
-        {/* Stats */}
-        <section className="bg-[#222021] rounded-2xl p-8 mb-14 text-white">
-          <div className="grid grid-cols-3 gap-6 text-center">
-            {[
-              { num: "14+", label: "שנות ניסיון" },
-              { num: "5000+", label: "לקוחות מרוצים" },
-              { num: "200+", label: "דגמים במלאי" },
-            ].map((s) => (
-              <div key={s.label}>
-                <p className="text-4xl font-black text-[#c9a96e]">{s.num}</p>
-                <p className="text-gray-400 mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+          <p>
+            אנו מתמחים באיתור והתאמה אישית של שעונים יוקרתיים לגברים ולנשים, תוך שילוב של עיצוב, אופנה וטכנולוגיה. אנו רואים בשעון איכותי לא רק מכשיר למדידת זמן, אלא תכשיט שמלווה את הרגעים המשמעותיים בחיים.
+          </p>
 
-        {/* CTA */}
-        <div className="text-center">
+          <p>
+            ב־TIK-TIME תמצאו קולקציה רחבה ומגוונת ממותגים בינלאומיים מובילים: שעונים קלאסיים, ספורטיביים, אוטומטיים ודיגיטליים, לצד פריטים ייחודיים לאירועים מיוחדים, שעוני חתן ומתנות יוקרה.
+          </p>
+
+          <p>
+            חנות התצוגה שלנו ממוקמת בשכונת רומֵמה בירושלים – מרחב מזמין, אישי ואקסקלוסיבי. הצוות המקצועי שלנו ילווה אתכם בתהליך בחירה מותאם אישית, עד שתמצאו את השעון שמדבר אליכם.
+          </p>
+
+          <p>
+            נוסדנו מתוך אהבה אמיתית לשעונים, ומתוך רצון לעשות מותגים בינלאומיים נגישים לכולם – עם מחירים הוגנים, שירות ישראלי חם ומקצועיות שאין שני לה. כבר כ־10 שנים אנו פועלים עם משלוחים לכל הארץ ומחירים תחרותיים.
+          </p>
+        </div>
+
+        <div className="mt-12 text-center">
           <Link href="/" className="btn-gold px-8 py-4 inline-block text-lg font-bold">
             לחנות שלנו
           </Link>

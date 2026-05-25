@@ -102,9 +102,14 @@ export default function ContactPage() {
                     content: "tiktime10@gmail.com",
                   },
                   {
+                    icon: <MapPin className="h-5 w-5" />,
+                    title: "כתובת",
+                    content: "פתח תקווה 3א, ירושלים",
+                  },
+                  {
                     icon: <Clock className="h-5 w-5" />,
                     title: "שעות פעילות",
-                    content: "ראשון–חמישי: 09:00–16:00",
+                    content: "ראשון–שבת: 10:00–21:00",
                   },
                 ].map((item) => (
                   <div key={item.title} className="flex items-start gap-4">
