@@ -9,13 +9,6 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white" dir="rtl">
-      {/* Hero */}
-      <div className="bg-[#222021] text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl font-black mb-4">קצת עלינו</h1>
-        </div>
-      </div>
-
       <div className="max-w-3xl mx-auto px-6 py-14">
         <div className="h-1 w-16 bg-[#c9a96e] mb-10" />
 

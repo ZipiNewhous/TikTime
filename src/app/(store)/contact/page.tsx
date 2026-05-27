@@ -28,14 +28,6 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      {/* Hero */}
-      <div className="bg-[#222021] text-white py-14">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-4xl font-black mb-3">צור קשר</h1>
-          <p className="text-gray-400 text-lg">נשמח לשמוע ממך ולסייע בכל שאלה</p>
-        </div>
-      </div>
-
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           {/* Contact Form */}

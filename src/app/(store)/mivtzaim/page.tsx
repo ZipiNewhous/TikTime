@@ -36,18 +36,6 @@ export default async function MivtzaimPage() {
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      <div className="bg-[#222021] text-white py-14">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-[#c9a96e] text-sm font-bold uppercase tracking-widest mb-2">
-            טיק טיים
-          </p>
-          <h1 className="text-4xl lg:text-5xl font-black mb-3">מבצעים מיוחדים</h1>
-          <p className="text-gray-300 text-lg max-w-xl mx-auto">
-            מחירים מיוחדים על שעוני יוקרה נבחרים – למוגבל בזמן בלבד
-          </p>
-        </div>
-      </div>
-
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <nav className="flex items-center gap-2 text-sm text-gray-500">
