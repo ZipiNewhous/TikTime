@@ -26,7 +26,7 @@ export default function BottomBanners() {
           alt="New Arrival Watch"
           fill
           className="object-cover"
-          style={{ objectPosition: "left center" }}
+          style={{ objectPosition: "right center" }}
         />
       </div>
 
