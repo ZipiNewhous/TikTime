@@ -5,7 +5,7 @@ export default function BottomBanners() {
   return (
     <section
       className="relative w-full overflow-hidden"
-      style={{ height: "clamp(260px, 35vw, 500px)" }}
+      style={{ height: "clamp(200px, 26vw, 400px)" }}
     >
       {/* Layer 1 — dark brown gradient background */}
       <Image
@@ -26,13 +26,13 @@ export default function BottomBanners() {
           alt="New Arrival Watch"
           fill
           className="object-cover"
-          style={{ objectPosition: "right center" }}
+          style={{ objectPosition: "left center" }}
         />
       </div>
 
-      {/* Layer 3 — NEW ARRIVAL text */}
+      {/* Layer 3 — NEW ARRIVAL text + SHOP NOW button stacked */}
       <div
-        className="absolute"
+        className="absolute flex flex-col items-center gap-4"
         style={{
           right: "8%",
           top: "50%",
@@ -48,28 +48,23 @@ export default function BottomBanners() {
           height={260}
           className="w-full h-auto object-contain"
         />
+        <Link
+          href="/shop"
+          className="hover:opacity-80 transition-opacity"
+          style={{
+            background: "#1a1a1a",
+            color: "#fff",
+            padding: "10px 28px",
+            fontSize: "13px",
+            letterSpacing: "2px",
+            textTransform: "uppercase",
+            display: "inline-block",
+            textDecoration: "none",
+          }}
+        >
+          SHOP NOW
+        </Link>
       </div>
-
-      {/* Layer 4 — SHOP NOW button */}
-      <Link
-        href="/shop"
-        className="absolute hover:opacity-80 transition-opacity"
-        style={{
-          right: "10%",
-          bottom: "22%",
-          zIndex: 4,
-          background: "#1a1a1a",
-          color: "#fff",
-          padding: "12px 32px",
-          fontSize: "14px",
-          letterSpacing: "2px",
-          textTransform: "uppercase",
-          display: "inline-block",
-          textDecoration: "none",
-        }}
-      >
-        SHOP NOW
-      </Link>
     </section>
   );
 }
