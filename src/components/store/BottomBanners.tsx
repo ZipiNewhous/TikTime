@@ -16,9 +16,9 @@ export default function BottomBanners() {
         style={{ zIndex: 1 }}
       />
 
-      {/* Layer 2 — watch image on the RIGHT side */}
+      {/* Layer 2 — watch image on the LEFT side */}
       <div
-        className="absolute top-0 right-0 h-full"
+        className="absolute top-0 left-0 h-full"
         style={{ width: "55%", zIndex: 2 }}
       >
         <Image
@@ -30,11 +30,11 @@ export default function BottomBanners() {
         />
       </div>
 
-      {/* Layer 3 — NEW ARRIVAL text + SHOP NOW on the LEFT side */}
+      {/* Layer 3 — NEW ARRIVAL text + SHOP NOW on the RIGHT side */}
       <div
         className="absolute flex flex-col items-center gap-4"
         style={{
-          left: "8%",
+          right: "8%",
           top: "50%",
           transform: "translateY(-50%)",
           width: "35%",
