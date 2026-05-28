@@ -16,10 +16,10 @@ export default function BottomBanners() {
         style={{ zIndex: 1 }}
       />
 
-      {/* Layer 2 — watch image on the LEFT side */}
+      {/* Layer 2 — watch image on the LEFT side, mirrored so watch face appears away from caption */}
       <div
         className="absolute top-0 left-0 h-full"
-        style={{ width: "55%", zIndex: 2 }}
+        style={{ width: "55%", zIndex: 2, transform: "scaleX(-1)" }}
       >
         <Image
           src="/images/banner-124.jpg"
