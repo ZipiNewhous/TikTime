@@ -118,10 +118,6 @@ export default function AdminLoginPage() {
               כניסה
             </Button>
           </form>
-
-          <p className="text-center text-xs text-gray-400 mt-6">
-            לפיתוח: admin@tiktime.co.il / admin123
-          </p>
         </div>
       </div>
     </div>
