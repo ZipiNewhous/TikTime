@@ -8,8 +8,11 @@ import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/db/prisma";
 
+// Strip a possible BOM / stray whitespace so signing here stays byte-for-byte
+// identical to verification in middleware.ts (which does the same cleanup).
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET ?? "tiktime-admin-secret-change-in-production"
+  (process.env.NEXTAUTH_SECRET ?? "").replace(/^﻿/, "").trim() ||
+    "tiktime-admin-secret-change-in-production"
 );
 
 const TOKEN_COOKIE = "tiktime-admin-token";
@@ -51,11 +54,26 @@ export async function getAdminFromRequest(req: NextRequest): Promise<AdminPayloa
 }
 
 // Login with email + password
+// Run a DB read with a few retries so a transient connection error while Neon
+// wakes from idle self-heals instead of failing the login.
+async function findAdminWithRetry(email: string) {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await prisma.adminUser.findUnique({ where: { email } });
+    } catch (err) {
+      lastErr = err;
+      await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+    }
+  }
+  throw lastErr;
+}
+
 export async function adminLogin(
   email: string,
   password: string
 ): Promise<{ success: true; token: string; admin: AdminPayload } | { success: false; error: string }> {
-  const admin = await prisma.adminUser.findUnique({ where: { email } });
+  const admin = await findAdminWithRetry(email);
 
   if (!admin) {
     return { success: false, error: "פרטים שגויים" };

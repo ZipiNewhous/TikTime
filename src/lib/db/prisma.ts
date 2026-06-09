@@ -15,7 +15,11 @@ function createPrismaClient(): PrismaClient {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL?.replace(/^﻿/, "").trim(),
     ssl: { rejectUnauthorized: false },
-    max: 1,
+    max: 3,
+    // Fail a stuck connect within 10s (Neon waking from idle) so callers can
+    // retry, instead of hanging until the whole function times out.
+    connectionTimeoutMillis: 10_000,
+    idleTimeoutMillis: 30_000,
   });
   const adapter = new PrismaPg(pool);
   return new PrismaClient({
@@ -26,6 +30,8 @@ function createPrismaClient(): PrismaClient {
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// Reuse the client across warm serverless invocations (not just in dev) so we
+// don't open a fresh Neon connection on every request.
+globalForPrisma.prisma = prisma;
 
 export default prisma;
