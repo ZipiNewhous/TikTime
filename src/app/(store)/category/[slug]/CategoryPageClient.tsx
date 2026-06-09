@@ -132,7 +132,7 @@ export default function CategoryPageClient({
         if (cancelled) return;
         setProducts(data.items ?? []);
         setTotal(data.total ?? 0);
-        setHasMore(1 < (data.totalPages ?? 1));
+        setHasMore(data.hasMore ?? 1 < (data.totalPages ?? 1));
       })
       .catch(console.error)
       .finally(() => { if (!cancelled) setLoading(false); });
@@ -157,7 +157,7 @@ export default function CategoryPageClient({
       const res = await fetch(`/api/products?${params}`);
       const data = await res.json();
       setProducts((prev) => [...prev, ...(data.items ?? [])]);
-      setHasMore(nextPage < (data.totalPages ?? 1));
+      setHasMore(data.hasMore ?? nextPage < (data.totalPages ?? 1));
     } catch (err) {
       console.error(err);
       pageRef.current--;

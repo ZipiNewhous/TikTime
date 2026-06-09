@@ -32,7 +32,7 @@ export default function BrandsProductsClient({ initialProducts, initialTotal, in
       const res = await fetch(`/api/products?page=${nextPage}&pageSize=${PAGE_SIZE}&sort=price_asc`);
       const data = await res.json();
       setProducts((prev) => [...prev, ...(data.items ?? [])]);
-      setHasMore(nextPage < (data.totalPages ?? 1));
+      setHasMore(data.hasMore ?? nextPage < (data.totalPages ?? 1));
     } catch (err) {
       console.error(err);
       pageRef.current--;

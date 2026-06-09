@@ -13,11 +13,23 @@ interface ProductCardProps {
   className?: string;
 }
 
+// Tiny gray square shown (blurred) while the real image loads.
+const BLUR_DATA_URL =
+  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNmM2YzZjMiLz48L3N2Zz4=";
+
+// Local fallback (no external service) shown when a product has no image
+// or its image URL fails to load. Renders the brand name on a light card.
+function fallbackImage(text: string) {
+  const safe = text.replace(/[<>&]/g, "");
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><rect width='400' height='400' fill='#f8f8f8'/><text x='50%' y='50%' font-family='Arial, sans-serif' font-size='22' fill='#cccccc' text-anchor='middle' dominant-baseline='middle'>${safe}</text></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
 export default function ProductCard({ product, className }: ProductCardProps) {
   const addItem = useCartStore((s) => s.addItem);
-  const [imgSrc, setImgSrc] = useState(
-    product.image1 ?? `https://placehold.co/400x400/f8f8f8/cccccc?text=${encodeURIComponent(product.brand.name)}`
-  );
+  const fallback = fallbackImage(product.brand.name);
+  const [imgSrc, setImgSrc] = useState(product.image1 ?? fallback);
+  const isFallback = imgSrc === fallback;
 
   const isOutOfStock = product.stockStatus === "out_of_stock";
   const hasSale = product.salePrice !== null && product.salePrice < product.price;
@@ -54,9 +66,10 @@ export default function ProductCard({ product, className }: ProductCardProps) {
             fill
             className="object-contain"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            onError={() =>
-              setImgSrc(`https://placehold.co/400x400/f8f8f8/cccccc?text=${encodeURIComponent(product.brand.name)}`)
-            }
+            placeholder="blur"
+            blurDataURL={BLUR_DATA_URL}
+            unoptimized={isFallback}
+            onError={() => setImgSrc(fallback)}
           />
         </Link>
 
