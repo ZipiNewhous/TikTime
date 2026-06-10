@@ -37,7 +37,9 @@ export default function CategoryCards() {
               key={cat.href}
               href={cat.href}
               className="group relative block overflow-hidden"
-              style={{ aspectRatio: "1 / 1" }}
+              /* Landscape ratio matching the source images (≈1123×777) so the
+                 watch sits fully inside instead of being cropped by a square. */
+              style={{ aspectRatio: "1123 / 777" }}
             >
               {/* Image fills the entire square — watch on left, clear space on right */}
               <Image
