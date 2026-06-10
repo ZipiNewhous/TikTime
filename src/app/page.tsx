@@ -1,7 +1,10 @@
+import dynamic from "next/dynamic";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import CartDrawer from "@/components/layout/CartDrawer";
 import { ToastContainer } from "@/components/ui/Toast";
+
+// Cart drawer is interaction-only — code-split it out of the initial page chunk.
+const CartDrawer = dynamic(() => import("@/components/layout/CartDrawer"));
 import HeroSection from "@/components/store/HeroSection";
 import BrandsSlider from "@/components/store/BrandsSlider";
 import CategoryCards from "@/components/store/CategoryCards";

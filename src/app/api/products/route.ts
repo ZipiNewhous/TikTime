@@ -60,7 +60,9 @@ export async function GET(req: NextRequest) {
     // Fetch one extra row to know whether another page exists, without a
     // separate COUNT query on every scroll. The card only needs `brand`,
     // so tags/categories are intentionally not joined here.
-    const rows = await prisma.product.findMany({
+    // Start both queries up front so the count (page 1 only) runs in parallel
+    // with the row fetch instead of waiting for it.
+    const rowsPromise = prisma.product.findMany({
       where,
       orderBy,
       skip: (page - 1) * pageSize,
@@ -69,15 +71,18 @@ export async function GET(req: NextRequest) {
         brand: { select: { id: true, name: true, slug: true } },
       },
     });
+    // The total count only changes when filters change, so compute it on the
+    // first page (used for the "X products" label) and skip it while scrolling.
+    const totalPromise = page === 1 ? prisma.product.count({ where }) : null;
+
+    const rows = await rowsPromise;
     const hasMore = rows.length > pageSize;
     const items = hasMore ? rows.slice(0, pageSize) : rows;
 
-    // The total count only changes when filters change, so compute it on the
-    // first page (used for the "X products" label) and skip it while scrolling.
     let total: number | undefined;
     let totalPages: number | undefined;
-    if (page === 1) {
-      total = await prisma.product.count({ where });
+    if (totalPromise) {
+      total = await totalPromise;
       totalPages = Math.ceil(total / pageSize);
     }
 

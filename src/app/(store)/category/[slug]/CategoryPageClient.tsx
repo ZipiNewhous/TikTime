@@ -50,6 +50,96 @@ const SORT_MAP: Record<string, string> = {
   newest: "newest",
 };
 
+// Top-level component (not defined inside CategoryPageClient) so it isn't a new
+// component type on every render — that would remount the whole filter drawer.
+function FilterPanel({
+  hasActiveFilters,
+  brandsInCategory,
+  selectedBrands,
+  inStock,
+  categoryChildren,
+  onClearFilters,
+  onToggleBrand,
+  onToggleInStock,
+  onClose,
+}: {
+  hasActiveFilters: boolean;
+  brandsInCategory: Brand[];
+  selectedBrands: number[];
+  inStock: boolean;
+  categoryChildren: { id: number; name: string; slug: string }[];
+  onClearFilters: () => void;
+  onToggleBrand: (brandId: number) => void;
+  onToggleInStock: (checked: boolean) => void;
+  onClose: () => void;
+}) {
+  return (
+    <div className="flex flex-col gap-6" dir="rtl">
+      {hasActiveFilters && (
+        <button
+          onClick={() => { onClearFilters(); onClose(); }}
+          className="flex items-center gap-2 text-[#c9a96e] font-semibold text-sm hover:underline"
+        >
+          <X className="h-4 w-4" />
+          נקה הכל
+        </button>
+      )}
+
+      {brandsInCategory.length > 0 && (
+        <div>
+          <h3 className="font-bold text-sm mb-3 text-[#222] uppercase tracking-wide">מותגים</h3>
+          <div className="flex flex-col gap-2">
+            {brandsInCategory.map((brand) => (
+              <label key={brand.id} className="flex items-center gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={selectedBrands.includes(brand.id)}
+                  onChange={() => onToggleBrand(brand.id)}
+                  className="w-4 h-4 accent-[#c9a96e]"
+                />
+                <span className="text-sm text-gray-700 group-hover:text-[#c9a96e] transition-colors">
+                  {brand.name}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div>
+        <h3 className="font-bold text-sm mb-3 text-[#222] uppercase tracking-wide">מלאי</h3>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={inStock}
+            onChange={(e) => onToggleInStock(e.target.checked)}
+            className="w-4 h-4 accent-[#c9a96e]"
+          />
+          <span className="text-sm text-gray-700">רק במלאי</span>
+        </label>
+      </div>
+
+      {categoryChildren.length > 0 && (
+        <div>
+          <h3 className="font-bold text-sm mb-3 text-[#222] uppercase tracking-wide">תת-קטגוריות</h3>
+          <div className="flex flex-col gap-2">
+            {categoryChildren.map((child) => (
+              <Link
+                key={child.id}
+                href={`/category/${child.slug}`}
+                className="text-sm text-gray-600 hover:text-[#c9a96e] transition-colors"
+                onClick={onClose}
+              >
+                {child.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function CategoryPageClient({
   category,
   brandsInCategory,
@@ -181,72 +271,6 @@ export default function CategoryPageClient({
 
   const hasActiveFilters = selectedBrands.length > 0 || inStock;
 
-  const FilterContent = () => (
-    <div className="flex flex-col gap-6" dir="rtl">
-      {hasActiveFilters && (
-        <button
-          onClick={() => { clearFilters(); setFilterOpen(false); }}
-          className="flex items-center gap-2 text-[#c9a96e] font-semibold text-sm hover:underline"
-        >
-          <X className="h-4 w-4" />
-          נקה הכל
-        </button>
-      )}
-
-      {brandsInCategory.length > 0 && (
-        <div>
-          <h3 className="font-bold text-sm mb-3 text-[#222] uppercase tracking-wide">מותגים</h3>
-          <div className="flex flex-col gap-2">
-            {brandsInCategory.map((brand) => (
-              <label key={brand.id} className="flex items-center gap-3 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={selectedBrands.includes(brand.id)}
-                  onChange={() => toggleBrand(brand.id)}
-                  className="w-4 h-4 accent-[#c9a96e]"
-                />
-                <span className="text-sm text-gray-700 group-hover:text-[#c9a96e] transition-colors">
-                  {brand.name}
-                </span>
-              </label>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div>
-        <h3 className="font-bold text-sm mb-3 text-[#222] uppercase tracking-wide">מלאי</h3>
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={inStock}
-            onChange={(e) => updateParam("inStock", e.target.checked ? "true" : null)}
-            className="w-4 h-4 accent-[#c9a96e]"
-          />
-          <span className="text-sm text-gray-700">רק במלאי</span>
-        </label>
-      </div>
-
-      {category.children.length > 0 && (
-        <div>
-          <h3 className="font-bold text-sm mb-3 text-[#222] uppercase tracking-wide">תת-קטגוריות</h3>
-          <div className="flex flex-col gap-2">
-            {category.children.map((child) => (
-              <Link
-                key={child.id}
-                href={`/category/${child.slug}`}
-                className="text-sm text-gray-600 hover:text-[#c9a96e] transition-colors"
-                onClick={() => setFilterOpen(false)}
-              >
-                {child.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-white" dir="rtl">
 
@@ -356,7 +380,17 @@ export default function CategoryPageClient({
                 <X className="h-6 w-6" />
               </button>
             </div>
-            <FilterContent />
+            <FilterPanel
+              hasActiveFilters={hasActiveFilters}
+              brandsInCategory={brandsInCategory}
+              selectedBrands={selectedBrands}
+              inStock={inStock}
+              categoryChildren={category.children}
+              onClearFilters={clearFilters}
+              onToggleBrand={toggleBrand}
+              onToggleInStock={(checked) => updateParam("inStock", checked ? "true" : null)}
+              onClose={() => setFilterOpen(false)}
+            />
           </div>
         </>
       )}

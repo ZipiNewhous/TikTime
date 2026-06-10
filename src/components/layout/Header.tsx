@@ -6,7 +6,11 @@ import { useState, useEffect } from "react";
 import { ShoppingCart, Search, Heart, Menu, X, ChevronDown } from "lucide-react";
 import { useCartStore } from "@/lib/store/cartStore";
 import { cn } from "@/lib/utils";
-import SearchBar from "./SearchBar";
+import dynamic from "next/dynamic";
+
+// Search overlay is only needed once the user opens search — load it on demand
+// so it stays out of the initial bundle.
+const SearchBar = dynamic(() => import("./SearchBar"), { ssr: false });
 
 /* ------------------------------------------------------------------ */
 /* NAV — per design spec (RTL: right → left)                          */
@@ -70,15 +74,15 @@ export default function Header() {
       </div>
 
       {/* ── ROW 2: Logo | Nav | Icons — all in one bar ──────────── */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-[1400px] mx-auto px-4">
           <div className="flex items-center h-[70px] gap-4" dir="rtl">
 
             {/* RIGHT (RTL start): Logo */}
-            <Link href="/" className="shrink-0">
+            <Link href="/" className="shrink-0" aria-label="דף הבית – טיק טיים">
               <Image
                 src="https://tiktime.co.il/497865_110.png"
-                alt="TikTime"
+                alt="טיק טיים"
                 width={130}
                 height={50}
                 className="h-[50px] w-auto object-contain"
@@ -87,8 +91,8 @@ export default function Header() {
             </Link>
 
             {/* CENTER: Nav items */}
-            <nav className="hidden lg:flex flex-1 items-center justify-center">
-              <ul className="flex items-center" dir="rtl">
+            <nav aria-label="ניווט ראשי" className="hidden lg:flex flex-1 items-center justify-center">
+              <ul className="flex items-center" dir="rtl" role="list">
                 {NAV_ITEMS.map((item) => (
                   <li
                     key={item.href}
@@ -98,6 +102,8 @@ export default function Header() {
                   >
                     <Link
                       href={item.href}
+                      aria-haspopup={item.children.length > 0 ? "true" : undefined}
+                      aria-expanded={item.children.length > 0 ? openDropdown === item.href : undefined}
                       className={cn(
                         "flex items-center gap-1 px-3 py-5 text-[13px] font-semibold",
                         "border-b-2 border-transparent transition-all duration-150 whitespace-nowrap",
@@ -105,22 +111,36 @@ export default function Header() {
                           ? "text-red-500 hover:text-red-600 hover:border-red-500"
                           : "text-[#222021] hover:text-[#c9a96e] hover:border-[#c9a96e]"
                       )}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          if (item.children.length > 0) {
+                            e.preventDefault();
+                            setOpenDropdown(openDropdown === item.href ? null : item.href);
+                          }
+                        }
+                        if (e.key === "Escape") setOpenDropdown(null);
+                      }}
                     >
                       {item.label}
                       {item.children.length > 0 && (
-                        <ChevronDown className="h-3 w-3 opacity-60" />
+                        <ChevronDown className="h-3 w-3 opacity-60" aria-hidden="true" />
                       )}
                     </Link>
 
                     {/* Dropdown */}
                     {item.children.length > 0 && openDropdown === item.href && (
-                      <div className="absolute top-full right-0 bg-white border border-gray-100 shadow-xl min-w-[200px] py-1 z-50">
+                      <div
+                        role="menu"
+                        className="absolute top-full right-0 bg-white border border-gray-100 shadow-xl min-w-[200px] py-1 z-50"
+                      >
                         {item.children.map((child) => (
                           <Link
                             key={child.href}
                             href={child.href}
+                            role="menuitem"
                             className="block px-5 py-3 text-sm text-gray-600 hover:text-[#c9a96e] hover:bg-gray-50 transition-colors"
                             onClick={() => setOpenDropdown(null)}
+                            onKeyDown={(e) => { if (e.key === "Escape") setOpenDropdown(null); }}
                           >
                             {child.label}
                           </Link>
@@ -166,34 +186,36 @@ export default function Header() {
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
                 className="lg:hidden text-gray-600 hover:text-[#222021] transition-colors"
-                aria-label="תפריט"
+                aria-label={mobileOpen ? "סגור תפריט" : "פתח תפריט"}
+                aria-expanded={mobileOpen}
+                aria-controls="mobile-menu"
               >
-                {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {mobileOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
               </button>
             </div>
 
           </div>
         </div>
-      </div>
+      </header>
 
       {/* ── MOBILE MENU ─────────────────────────────────────────── */}
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex">
-          <div className="fixed inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
+        <div id="mobile-menu" className="lg:hidden fixed inset-0 z-50 flex" role="dialog" aria-modal="true" aria-label="תפריט ניווט">
+          <div className="fixed inset-0 bg-black/60" onClick={() => setMobileOpen(false)} aria-hidden="true" />
           <div className="relative bg-white w-[300px] h-full overflow-y-auto shadow-2xl ml-auto">
             <div className="flex items-center justify-between p-4 border-b border-gray-100">
               <Image
                 src="https://tiktime.co.il/497865_110.png"
-                alt="TikTime"
+                alt="טיק טיים"
                 width={100}
                 height={38}
                 className="h-9 w-auto"
               />
-              <button onClick={() => setMobileOpen(false)} className="text-gray-500 hover:text-gray-800">
-                <X className="h-6 w-6" />
+              <button onClick={() => setMobileOpen(false)} className="text-gray-500 hover:text-gray-800" aria-label="סגור תפריט">
+                <X className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
-            <nav className="flex flex-col" dir="rtl">
+            <nav aria-label="ניווט נייד" className="flex flex-col" dir="rtl">
               {NAV_ITEMS.map((item) => (
                 <div key={item.href} className="border-b border-gray-100">
                   <div className="flex items-center justify-between">
