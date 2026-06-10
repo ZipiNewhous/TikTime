@@ -30,7 +30,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#2d2d2d] text-white" dir="rtl">
+    <footer className="bg-tik-ink border-t border-white/10 text-white" dir="rtl">
       {/* Main columns */}
       <div className="max-w-[1400px] mx-auto px-4 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">

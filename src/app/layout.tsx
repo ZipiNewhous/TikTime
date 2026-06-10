@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Assistant } from "next/font/google";
+import { Assistant, Frank_Ruhl_Libre } from "next/font/google";
 import "./globals.css";
 
 const assistant = Assistant({
@@ -7,6 +7,15 @@ const assistant = Assistant({
   weight: ["300", "400", "600", "700", "800"],
   display: "swap",
   variable: "--font-assistant",
+});
+
+// Display serif — refined Hebrew/Latin face used for headings only.
+// Pairs an editorial, luxury voice against the clean Assistant body sans.
+const frankRuhl = Frank_Ruhl_Libre({
+  subsets: ["hebrew", "latin"],
+  weight: ["500", "700", "900"],
+  display: "swap",
+  variable: "--font-frank",
 });
 
 export const metadata: Metadata = {
@@ -36,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="he" dir="rtl" className={assistant.variable}>
+    <html lang="he" dir="rtl" className={`${assistant.variable} ${frankRuhl.variable}`}>
       <body className={`${assistant.className} min-h-screen flex flex-col antialiased`}>
         {children}
       </body>

@@ -57,7 +57,7 @@ const BENEFITS = [
 
 export default function BenefitsSection() {
   return (
-    <section className="bg-[#1a1a1a]" dir="rtl">
+    <section className="bg-tik-ink" dir="rtl">
       <div className="max-w-[1400px] mx-auto px-4 py-12">
         {/* 6 icons — 3 per row */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-8">

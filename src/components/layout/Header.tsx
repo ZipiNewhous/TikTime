@@ -69,7 +69,7 @@ export default function Header() {
   return (
     <>
       {/* ── ROW 1: Announcement bar ─────────────────────────────── */}
-      <div className="bg-[#222021] text-white text-center py-2 text-xs tracking-wide">
+      <div className="bg-tik-ink text-white text-center py-2 text-xs tracking-wide">
         משלוחים עד בית הלקוח
       </div>
 

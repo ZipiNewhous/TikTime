@@ -13,7 +13,7 @@ export default function NewsletterSection() {
   };
 
   return (
-    <section className="bg-[#111111] py-12" dir="rtl">
+    <section className="bg-tik-ink border-t border-white/10 py-12" dir="rtl">
       <div className="max-w-[600px] mx-auto px-6 text-center">
         <h2 className="text-white text-[22px] font-bold mb-2">
           הצטרפו לניוזלטר שלנו
